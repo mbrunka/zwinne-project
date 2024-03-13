@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import React from 'react';
-import { Coffee, Home, Star } from 'react-feather';
+import { Coffee, Home, Layers, Star } from 'react-feather';
 import Header from '../Header';
 import NavItem from '../common/NavItem';
 
@@ -28,9 +28,9 @@ const Layout = ({ children }: LayoutProps) => {
             <NavItem label="Dashboard" href="/" ico={Home} />
 
             <NavItem
-               label="label1"
-               href="/page1"
-               ico={Coffee}
+               label="Projects"
+               href="/projects"
+               ico={Layers}
             />
             <NavItem
                label="label2"
