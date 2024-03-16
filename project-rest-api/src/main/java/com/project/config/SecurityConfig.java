@@ -7,10 +7,12 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.client.RestTemplate;
+
 @Configuration
 public class SecurityConfig {
     // dzięki adnotacji @Bean Spring uruchomi metodę i zarejestruje w kontenerze obiekt przez nią
-    @Bean // zwrócony, natomiast adnotacja @Autowired użyta w innej klasie spowoduje jego wstrzyknięcie
+    @Bean
+    // zwrócony, natomiast adnotacja @Autowired użyta w innej klasie spowoduje jego wstrzyknięcie
     RestTemplate customRestTemplate(RestTemplateBuilder restTemplateBuilder) {
         return restTemplateBuilder.basicAuthentication("admin", "admin").build();
     }

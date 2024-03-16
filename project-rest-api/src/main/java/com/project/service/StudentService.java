@@ -1,15 +1,21 @@
 package com.project.service;
 
-import java.util.Optional;
+import com.project.model.Student;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import com.project.model.Student;
+
+import java.util.Optional;
 
 public interface StudentService {
     Optional<Student> getStudent(Integer projektId);
+
     Student setStudent(Student projekt);
+
     void deleteStudent(Integer projektId);
+
     Page<Student> getStudenci(Pageable pageable);
+
     Page<Student> searchByNrIndeksu(String nrIndeksu, Pageable pageable);
+
     Page<Student> searchByNazwisko(String nazwisko, Pageable pageable);
 }

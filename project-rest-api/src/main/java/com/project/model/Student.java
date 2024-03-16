@@ -7,43 +7,53 @@ import java.util.Set;
 
 @Entity //Indeksujemy kolumny, które są najczęściej wykorzystywane do wyszukiwania studentów
 @Table(name = "student",
-        indexes = { @Index(name = "idx_nazwisko", columnList = "nazwisko", unique = false),
-                @Index(name = "idx_nr_indeksu", columnList = "nr_indeksu", unique = true) })
+        indexes = {@Index(name = "idx_nazwisko", columnList = "nazwisko", unique = false),
+                @Index(name = "idx_nr_indeksu", columnList = "nr_indeksu", unique = true)})
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotBlank(message = "Pole student_id nie może być puste!")
     @Size(min = 1, max = 50, message = "Nazwa musi zawierać od {min} do {max} znaków!")
-    @Column(name="student_id")
+    @Column(name = "student_id")
     private Integer studentId;
+
     @NotBlank(message = "Pole imie nie może być puste!")
     @Size(min = 1, max = 50, message = "Nazwa musi zawierać od {min} do {max} znaków!")
     @Column(nullable = false, length = 50)
     private String imie;
+
     @NotBlank(message = "Pole nazwisko nie może być puste!")
     @Size(min = 1, max = 100, message = "Nazwa musi zawierać od {min} do {max} znaków!")
     @Column(nullable = false, length = 100)
     private String nazwisko;
+
     @NotBlank(message = "Pole nr_indeksu nie może być puste!")
     @Size(min = 6, max = 20, message = "Nazwa musi zawierać od {min} do {max} znaków!")
     @Column(name = "nr_indeksu", nullable = false, length = 20, unique = true)
     private String nrIndeksu;
+
     @NotEmpty(message = "Pole email nie może być puste!")
     @Email(message = "Email should be valid")
     @Max(value = 50, message = "Pole email może zawierać maksymalnie {value} znaków!")
     @Column(nullable = false, length = 50, unique = true)
     private String email;
-    @NotEmpty(message = "Pole email nie może być puste!")
+
+    @NotEmpty(message = "Pole stacjonarny nie może być puste!")
     @Column(nullable = false)
     private Boolean stacjonarny;
+
     @ManyToMany(mappedBy = "studenci")
     private Set<Projekt> projekty;
-    public Student() {}
+
+    public Student() {
+    }
+
     public Student(String imie, String nazwisko, String nrIndeksu, Boolean stacjonarny) {
         this.imie = imie;
         this.nazwisko = nazwisko;
         this.nrIndeksu = nrIndeksu;
     }
+
     public Student(String imie, String nazwisko, String nrIndeksu, String email, Boolean stacjonarny) {
         this.imie = imie;
         this.nazwisko = nazwisko;
@@ -107,6 +117,6 @@ public class Student {
     public void setProjekty(Set<Projekt> projekty) {
         this.projekty = projekty;
     }
-//...
+
 }
 
