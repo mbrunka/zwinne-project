@@ -21,10 +21,10 @@ public class Zadanie {
     @Column(nullable = false, length = 100)
     private String nazwa;
 
-    @Column(nullable = true)
+    @Column
     private Integer kolejnosc;
 
-    @Column(nullable = true, length = 1000)
+    @Column(length = 1000)
     private String opis;
 
     @CreationTimestamp

@@ -32,7 +32,7 @@ public class Projekt {
     @Column(nullable = false, length = 50)
     private String nazwa;
 
-    @Column(nullable = true, length = 1000)
+    @Column(length = 1000)
     private String opis;
 
     // ...
@@ -44,7 +44,7 @@ public class Projekt {
     @Column(name = "dataczas_modyfikacji", nullable = false)
     private LocalDateTime dataCzasModyfikacji;
 
-    @Column(nullable = true)
+    @Column
     private LocalDateTime data_oddania;
 
     // --------------------------------------------
