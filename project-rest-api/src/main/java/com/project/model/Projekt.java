@@ -4,6 +4,10 @@ package com.project.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,6 +15,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "projekt") //TODO Indeksować kolumny, które są najczęściej wykorzystywane do wyszukiwania projektów
 public class Projekt {
@@ -47,80 +55,8 @@ public class Projekt {
     @Column
     private LocalDateTime data_oddania;
 
-    // --------------------------------------------
-    // Konstruktory
-    public Projekt() {
-    }
-
     public Projekt(String nazwa, String opis) {
         this.nazwa = nazwa;
         this.opis = opis;
-    }
-
-    // --------------------------------------------
-    // Gettery i Settery
-
-    public Integer getProjektId() {
-        return projektId;
-    }
-
-    public void setProjektId(Integer projektId) {
-        this.projektId = projektId;
-    }
-
-    public String getNazwa() {
-        return nazwa;
-    }
-
-    public void setNazwa(String nazwa) {
-        this.nazwa = nazwa;
-    }
-
-    public Set<Student> getStudenci() {
-        return studenci;
-    }
-
-    public void setStudenci(Set<Student> studenci) {
-        this.studenci = studenci;
-    }
-
-    public String getOpis() {
-        return opis;
-    }
-
-    public void setOpis(String opis) {
-        this.opis = opis;
-    }
-
-    public LocalDateTime getDataCzasUtworzenia() {
-        return dataCzasUtworzenia;
-    }
-
-    public void setDataCzasUtworzenia(LocalDateTime dataCzasUtworzenia) {
-        this.dataCzasUtworzenia = dataCzasUtworzenia;
-    }
-
-    public LocalDateTime getDataCzasModyfikacji() {
-        return dataCzasModyfikacji;
-    }
-
-    public void setDataCzasModyfikacji(LocalDateTime dataCzasModyfikacji) {
-        this.dataCzasModyfikacji = dataCzasModyfikacji;
-    }
-
-    public LocalDateTime getData_oddania() {
-        return data_oddania;
-    }
-
-    public void setData_oddania(LocalDateTime data_oddania) {
-        this.data_oddania = data_oddania;
-    }
-
-    public List<Zadanie> getZadania() {
-        return zadania;
-    }
-
-    public void setZadania(List<Zadanie> zadania) {
-        this.zadania = zadania;
     }
 }
