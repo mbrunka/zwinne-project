@@ -18,7 +18,7 @@ import java.util.Collections;
 @AllArgsConstructor
 @Entity
 @Table(name = "_user_")
-public class User implements UserDetails{
+public class User implements UserDetails {
     @Id
     @GeneratedValue
     private Integer id;
@@ -67,7 +67,6 @@ public class User implements UserDetails{
     public String getFullName() {
         return firstName + " " + lastName;
     }
-
 
 
 }

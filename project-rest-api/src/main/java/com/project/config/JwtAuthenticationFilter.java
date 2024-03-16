@@ -28,13 +28,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
-    ) throws ServletException,IOException {
+    ) throws ServletException, IOException {
         final String authorizationHeader = request.getHeader("Authorization");
         final String jwtToken;
         final String userEmail;
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
-            return;
         } else {
             jwtToken = authorizationHeader.substring(7);
             userEmail = jwtUtil.extractUsername(jwtToken);
