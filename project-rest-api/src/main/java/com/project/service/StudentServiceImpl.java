@@ -41,8 +41,4 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.findByNrIndeksuStartsWith(nrIndeksu, pageable);
     }
 
-    @Override
-    public Page<Student> searchByNazwisko(String nazwisko, Pageable pageable) {
-        return studentRepository.findByNazwiskoStartsWithIgnoreCase(nazwisko, pageable);
-    }
 }

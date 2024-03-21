@@ -17,5 +17,4 @@ public interface StudentService {
 
     Page<Student> searchByNrIndeksu(String nrIndeksu, Pageable pageable);
 
-    Page<Student> searchByNazwisko(String nazwisko, Pageable pageable);
 }

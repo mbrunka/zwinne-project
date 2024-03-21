@@ -1,4 +1,4 @@
-package com.project.security;
+package com.project.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,13 +21,22 @@ import java.util.Collections;
 public class User implements UserDetails {
     @Id
     @GeneratedValue
-    private Integer id;
+    private Integer userId;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
     private String password;
+
     private String firstName;
+
     private String lastName;
+
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Student student;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

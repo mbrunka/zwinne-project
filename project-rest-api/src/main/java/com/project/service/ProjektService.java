@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
 public interface ProjektService {
+
     Optional<Projekt> getProjekt(Integer projektId);
 
     Projekt setProjekt(Projekt projekt);
@@ -16,4 +17,5 @@ public interface ProjektService {
     Page<Projekt> getProjekty(Pageable pageable);
 
     Page<Projekt> searchByNazwa(String nazwa, Pageable pageable);
+
 }

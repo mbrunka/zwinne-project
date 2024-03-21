@@ -15,8 +15,9 @@ import java.net.URI;
 
 
 // dzięki adnotacji @RestController klasa jest traktowana jako zarządzany
+
 @RestController // przez kontener Springa REST-owy kontroler obsługujący sieciowe żądania
-@RequestMapping("/api") // adnotacja @RequestMapping umieszczona w tym miejscu pozwala definiować
+@RequestMapping("/api/v1/projekty") // adnotacja @RequestMapping umieszczona w tym miejscu pozwala definiować
 public class ProjektRestController { // cześć wspólną adresu, wstawianą przed wszystkimi poniższymi ścieżkami
     private final ProjektService projektService; //serwis jest automatycznie wstrzykiwany poprzez konstruktor
 
@@ -28,14 +29,14 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
     // PRZED KAŻDĄ Z PONIŻSZYCH METOD JEST UMIESZCZONA ADNOTACJA (@GetMapping, PostMapping, ... ), KTÓRA OKREŚLA
     // RODZAJ METODY HTTP, A TAKŻE ADRES I PARAMETRY ŻĄDANIA
     //Przykład żądania wywołującego metodę: GET http://localhost:8080/api/projekty/1
-    @GetMapping("/projekty/{projektId}")
+    @GetMapping("/{projektId}")
     ResponseEntity<Projekt> getProjekt(@PathVariable Integer projektId) {// @PathVariable oznacza, że wartość
         return ResponseEntity.of(projektService.getProjekt(projektId)); // parametru przekazywana jest w ścieżce
     }
 
     // @Valid włącza automatyczną walidację na podstawie adnotacji zawartych
     // w modelu np. NotNull, Size, NotEmpty itd. (z jakarta.validation.constraints.*)
-    @PostMapping(path = "/projekty")
+    @PostMapping()
     ResponseEntity<Void> createProjekt(@Valid @RequestBody Projekt projekt) {// @RequestBody oznacza, że dane
         // projektu (w formacie JSON) są
         Projekt createdProjekt = projektService.setProjekt(projekt); // przekazywane w ciele żądania
@@ -44,7 +45,7 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
         return ResponseEntity.created(location).build(); // zwracany jest kod odpowiedzi 201 - Created
     } // z linkiem location w nagłówku
 
-    @PutMapping("/projekty/{projektId}")
+    @PutMapping("/{projektId}")
     public ResponseEntity<Void> updateProjekt(@Valid @RequestBody Projekt projekt,
                                               @PathVariable Integer projektId) {
         return projektService.getProjekt(projektId)
@@ -55,7 +56,7 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
                 .orElseGet(() -> ResponseEntity.notFound().build()); // 404 - Not found
     }
 
-    @DeleteMapping("/projekty/{projektId}")
+    @DeleteMapping("/{projektId}")
     public ResponseEntity<Void> deleteProjekt(@PathVariable Integer projektId) {
         return projektService.getProjekt(projektId).map(p -> {
             projektService.deleteProjekt(projektId);
@@ -64,14 +65,14 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
     }
 
     //Przykład żądania wywołującego metodę: http://localhost:8080/api/projekty?page=0&size=10&sort=nazwa,desc
-    @GetMapping(value = "/projekty")
+    @GetMapping
     Page<Projekt> getProjekty(Pageable pageable) { // @RequestHeader HttpHeaders headers – jeżeli potrzebny
         return projektService.getProjekty(pageable); // byłby nagłówek, wystarczy dodać drugą zmienną z adnotacją
     }
 
     // Przykład żądania wywołującego metodę: GET http://localhost:8080/api/projekty?nazwa=webowa
     // Metoda zostanie wywołana tylko, gdy w żądaniu będzie przesyłana wartość parametru nazwa.
-    @GetMapping(value = "/projekty", params = "nazwa")
+    @GetMapping(params = "nazwa")
     Page<Projekt> getProjektyByNazwa(@RequestParam String nazwa, Pageable pageable) {
         return projektService.searchByNazwa(nazwa, pageable);
     }
