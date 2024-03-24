@@ -2,20 +2,16 @@ import { SettingsProvider } from "@/components/SettingsContext";
 import { ChakraProvider, Flex, Spinner } from "@chakra-ui/react";
 import { Figtree, Nunito_Sans } from "@next/font/google";
 import axios from "axios";
+import Cookies from "js-cookie";
 import { Session } from "next-auth";
-import {
-  SessionProvider,
-  getSession,
-  signIn,
-  useSession,
-} from "next-auth/react";
+import { SessionProvider, useSession } from "next-auth/react";
 import { AppProps } from "next/app";
 import getConfig from "next/config";
 import { useRouter } from "next/router";
 import React from "react";
 import { SWRConfig } from "swr";
+import "../styles/global.scss";
 import theme from "../theme";
-import '../styles/global.scss';
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin", "latin-ext"],
@@ -34,14 +30,25 @@ const figtree = Figtree({
 const { publicRuntimeConfig } = getConfig();
 
 axios.defaults.baseURL = `${publicRuntimeConfig.apiUrl}`;
-axios.interceptors.request.use(async (config) => {
-  const session = await getSession();
-  if (!session?.token || typeof session.token !== "string") return config;
 
-  config.headers = {
-    ...config.headers,
-    Authorization: session?.token,
-  };
+axios.interceptors.request.use(async (config) => {
+  const jwtToken = Cookies.get("token");
+
+  const axiosHeaders =
+    jwtToken?.length > 0
+      ? {
+          ...config.headers,
+          Authorization: jwtToken,
+          "X-API-Key": publicRuntimeConfig.apiKey,
+          "Content-Type": "application/json",
+        }
+      : {
+          ...config.headers,
+          "X-API-Key": publicRuntimeConfig.apiKey,
+          "Content-Type": "application/json",
+        };
+
+  config.headers = axiosHeaders;
 
   return config;
 });
@@ -96,18 +103,18 @@ function App({ Component, pageProps }: CustomAppProps) {
 
 function Auth({ children }) {
   const { data: session, status } = useSession();
+  const jwtToken = Cookies.get("token");
   //@ts-ignore
   const isUser = !!session?.user?.id;
-  const userLocale = session?.user?.profile?.locale;
   const router = useRouter();
   const { locale, asPath } = router;
 
   React.useEffect(() => {
     if (status === "loading") return; // Do nothing while loading
-    if (status === "unauthenticated" || !isUser) signIn(); // If not authenticated, force log in
-  }, [status, isUser]);
+    if (!jwtToken) router?.push("/signin"); // If not authenticated, force log in
+  }, [status, isUser, jwtToken, router]);
 
-  if (isUser) {
+  if (jwtToken) {
     return children;
   }
 

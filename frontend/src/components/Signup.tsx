@@ -21,10 +21,13 @@ import { isEmail, isStrongPassword } from "validator";
 import AlertMessage from "./common/AlertMessage";
 
 type Inputs = {
-  username: string;
   email: string;
   password: string;
   passwordRepeat: string;
+  firstName: string;
+  lastName: string;
+  indexNo: number;
+  stationary: boolean
 };
 
 const Signup = () => {
@@ -39,22 +42,27 @@ const Signup = () => {
   const router = useRouter();
 
   const onSubmit = async (data: Inputs) => {
+
     if (data.password != data.passwordRepeat) {
       setError("DifferentPasswords");
       return;
     }
 
     const dataToSend = {
-      username: data.username,
+      firstName: data?.firstName,
+      lastName: data?.lastName,
       email: data.email,
       password: data.password,
+      nrIndeksu: data?.indexNo,
+      stacjonarny: data?.stationary,
     };
 
-    await axios
-      .post("/user/admin", {
+    try{
+      await axios
+      .post("auth/register", {
         ...dataToSend,
       })
-      .then(async () => {
+      .then(async (data) => {
         setError(null);
         router.push({
           pathname: "/signin",
@@ -62,8 +70,15 @@ const Signup = () => {
         });
       })
       .catch((error) => {
+        console.log(error);
         setError(error?.response?.data?.message);
       });
+    } catch {
+      console.log(error);
+      setError(error?.response?.data?.message);
+    }
+
+    
   };
 
   return (
@@ -90,23 +105,9 @@ const Signup = () => {
             Sign up
           </Heading>
 
-          {error && <AlertMessage status="error" message="Sing up error" />}
+          {error && <AlertMessage status="error" message="An account with given email already exists" />}
 
           <SimpleGrid columns={2} width="100%" spacingX="1rem" spacingY="2rem">
-            <FormControl isRequired isInvalid={!!errors?.email}>
-              <FormLabel>Username</FormLabel>
-              <Input
-                autoFocus
-                {...register("username", {
-                  required: true,
-                  validate: (value) => value.length > 2 || "Wrong username",
-                })}
-              />
-              {!!errors?.username && (
-                <FormErrorMessage>Field required</FormErrorMessage>
-              )}
-            </FormControl>
-
             <FormControl isRequired isInvalid={!!errors?.email}>
               <FormLabel>Email</FormLabel>
               <Input
@@ -117,6 +118,45 @@ const Signup = () => {
                 })}
               />
               {!!errors?.email && (
+                <FormErrorMessage>Field required</FormErrorMessage>
+              )}
+            </FormControl>
+
+            <FormControl isRequired isInvalid={!!errors?.indexNo}>
+              <FormLabel>Index number</FormLabel>
+              <Input
+                type="number"
+                {...register("indexNo", {
+                  required: true,
+                  minLength: 6,
+                  maxLength: 6,
+                })}
+              />
+              {!!errors?.indexNo && (
+                <FormErrorMessage>Wrong index number</FormErrorMessage>
+              )}
+            </FormControl>
+
+            <FormControl isRequired isInvalid={!!errors?.firstName}>
+              <FormLabel>First name</FormLabel>
+              <Input
+                {...register("firstName", {
+                  required: true,
+                })}
+              />
+              {!!errors?.firstName && (
+                <FormErrorMessage>Field required</FormErrorMessage>
+              )}
+            </FormControl>
+
+            <FormControl isRequired isInvalid={!!errors?.lastName}>
+              <FormLabel>Last name</FormLabel>
+              <Input
+                {...register("lastName", {
+                  required: true,
+                })}
+              />
+              {!!errors?.lastName && (
                 <FormErrorMessage>Field required</FormErrorMessage>
               )}
             </FormControl>
@@ -151,6 +191,18 @@ const Signup = () => {
               {!!errors?.passwordRepeat && (
                 <FormErrorMessage>Field required</FormErrorMessage>
               )}
+            </FormControl>
+
+            <FormControl mt="0.5rem">
+              <Flex>
+                <Controller
+                  name="stationary"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => <Checkbox {...field} />}
+                />
+                <FormLabel variant="simple">Stationary studies</FormLabel>
+              </Flex>
             </FormControl>
           </SimpleGrid>
 

@@ -34,6 +34,8 @@ public class AuthenticationService {
                 .lastName(request.getLastName())
                 .role(Role.STUDENT)
                 .build();
+
+        logger.info("" + user.getUserId());
         userRepository.save(user);
         User createdUser = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();

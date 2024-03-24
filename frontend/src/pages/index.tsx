@@ -26,6 +26,6 @@ const Index = () => {
 };
 
 
-Index.auth = false;
+Index.auth = true;
 
 export default Index;

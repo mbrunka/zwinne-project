@@ -1,6 +1,8 @@
 import { useSettings } from "@/components/SettingsContext";
+import { clearTokenCookie } from "@/utils/cookies";
+import axios from "axios";
 import { Session } from "next-auth";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { mutate } from "swr";
@@ -32,10 +34,13 @@ export function useUser({ redirectTo = null, redirectIfFound = false } = {}): [
     }
   }, [session]);
 
-  useEffect(() => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(async () => {
     if (!error || !session?.currentRole?.id) return;
-    signOut({ redirect: false });
-  }, [error, session?.currentRole?.id]);
+    // await axios.post("/logout");
+    clearTokenCookie();
+    router.push("/signin");
+  }, [error, router, session?.currentRole?.id]);
 
   const isLoading = !!loading || (!session && isValidating);
   const hasSession = Boolean(session?.user);

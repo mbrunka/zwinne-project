@@ -47,7 +47,7 @@ export default NextAuth({
                if (!credentials) throw new Error('No credentials provided!');
 
                const auth = await axios.post<ServerResponse>(
-                  `${process.env.API_URL}/auth/loginAdmin`,
+                  `${process.env.API_URL}/auth/login`,
                   {
                      email: credentials.email,
                      password: credentials.password,

@@ -5,6 +5,7 @@ const nextConfig = {
   publicRuntimeConfig: {
     basePath: process.env.BASE_PATH || "",
     apiUrl: process.env.API_URL || "",
+    apiKey: process.env.API_KEY || "",
   },
   typescript: {
     // !! WARN !!

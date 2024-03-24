@@ -17,6 +17,7 @@ import java.net.URI;
 // dzięki adnotacji @RestController klasa jest traktowana jako zarządzany
 
 @RestController // przez kontener Springa REST-owy kontroler obsługujący sieciowe żądania
+@CrossOrigin
 @RequestMapping("/api/v1/projekty") // adnotacja @RequestMapping umieszczona w tym miejscu pozwala definiować
 public class ProjektRestController { // cześć wspólną adresu, wstawianą przed wszystkimi poniższymi ścieżkami
     private final ProjektService projektService; //serwis jest automatycznie wstrzykiwany poprzez konstruktor
