@@ -4,7 +4,9 @@
 
 **Jako prowadzący chcę móc logować się do aplikacji**
 
-**Jako prowadzący chcę móc zapraszać do systemu nowych prowadzących**
+**Jako prowadzący chcę móc akceptować w systemie nowych prowadzących**
+
+**Jako prowadzący chcę móc zarejestrować się w sytemie jako kandydat na prowadzącego**
 
 **Jako student chcę móc rejestrować się i logować do aplikacji**
 
