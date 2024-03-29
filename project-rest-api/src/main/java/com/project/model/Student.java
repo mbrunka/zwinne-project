@@ -18,7 +18,7 @@ import java.util.Set;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer studentId;
+    private Long studentId;
 
     @OneToOne
     @MapsId

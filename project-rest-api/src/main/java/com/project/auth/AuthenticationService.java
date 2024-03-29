@@ -1,6 +1,6 @@
 package com.project.auth;
 
-import com.project.auth.requsts.*;
+import com.project.auth.request.*;
 import com.project.config.JwtUtil;
 import com.project.model.Role;
 import com.project.model.Student;
@@ -49,9 +49,11 @@ public class AuthenticationService {
         Student createdStudent = studentRepository.findByNrIndeksu(request.getNrIndeksu())
                 .orElseThrow();
         user.setStudent(createdStudent);
-        var jwtToken = jwtUtil.generateToken(user);
+        var jwtAccessToken = jwtUtil.generateAccessToken(user);
+        var jwtRefreshToken = jwtUtil.generateRefreshToken(user);
         return AuthenticationResponse.builder()
-                .token(jwtToken)
+                .authToken(jwtAccessToken)
+                .refreshToken(jwtRefreshToken)
                 .build();
     }
 
@@ -65,9 +67,11 @@ public class AuthenticationService {
                 .role(Role.KANDYDAT_N)
                 .build();
         userRepository.save(user);
-        var jwtToken = jwtUtil.generateToken(user);
+        var jwtAccessToken = jwtUtil.generateAccessToken(user);
+        var jwtRefreshToken = jwtUtil.generateRefreshToken(user);
         return AuthenticationResponse.builder()
-                .token(jwtToken)
+                .authToken(jwtAccessToken)
+                .refreshToken(jwtRefreshToken)
                 .build();
     }
 
@@ -78,16 +82,19 @@ public class AuthenticationService {
         );
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
+        var jwtAccessToken = jwtUtil.generateAccessToken(user);
+        var jwtRefreshToken = jwtUtil.generateRefreshToken(user);
         return AuthenticationResponse.builder()
-                .token(jwtUtil.generateToken(user))
+                .authToken(jwtAccessToken)
+                .refreshToken(jwtRefreshToken)
                 .build();
     }
 
-    public AuthenticationResponse refresh(AuthenticationRequest request) {
+    public RefreshResponse refresh(RefreshRequest request) {
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
-        return AuthenticationResponse.builder()
-                .token(jwtUtil.generateToken(user))
+        return RefreshResponse.builder()
+                .authToken(jwtUtil.generateAccessToken(user))
                 .build();
     }
 
@@ -95,7 +102,7 @@ public class AuthenticationService {
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
         return AuthenticationResponse.builder()
-                .token(jwtUtil.generateToken(user))
+                .authToken(null)
                 .build();
     }
 
@@ -110,7 +117,7 @@ public class AuthenticationService {
                 .nrIndeksu(user.getStudent().getNrIndeksu())
                 .stacjonarny(user.getStudent().getStacjonarny())
                 .userId(user.getUserId().toString())
-                .token(jwtUtil.generateToken(user))
+                .token(jwtUtil.generateAccessToken(user))
                 .build();
     }
 

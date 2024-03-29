@@ -1,4 +1,4 @@
-package com.project.auth.requsts;
+package com.project.auth.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetUserRequest {
-    private String email;
-    private String token;
+public class RefreshRequest {
+    String email;
+    String refreshToken;
 }

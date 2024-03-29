@@ -1,4 +1,4 @@
-package com.project.auth.requsts;
+package com.project.auth.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,14 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetUserResponse {
-    private String token;
+public class RegisterRequest {
     private String email;
-    private String role;
+    private String password;
     private String firstName;
     private String lastName;
     private String nrIndeksu;
     private Boolean stacjonarny;
-    private String userId;
-
 }
