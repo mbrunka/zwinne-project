@@ -1,4 +1,4 @@
-package com.project.auth.requsts;
+package com.project.auth.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationRequest {
-    String password;
+public class TeacherRegisterRequest {
     private String email;
+    private String password;
+    private String firstName;
+    private String lastName;
 }

@@ -1,6 +1,6 @@
 package com.project.auth;
 
-import com.project.auth.requsts.*;
+import com.project.auth.request.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,15 +28,15 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> register(
+    public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ) {
         return ResponseEntity.ok(service.authenticate(request));
     }
 
-    @PatchMapping("/refresh")
-    public ResponseEntity<AuthenticationResponse> refresh(
-            @RequestBody AuthenticationRequest request
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshResponse> refresh(
+            @RequestBody RefreshRequest request
     ) {
         return ResponseEntity.ok(service.refresh(request));
     }
