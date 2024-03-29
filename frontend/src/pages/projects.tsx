@@ -1,34 +1,46 @@
 import { Heading } from "@chakra-ui/react";
 import Layout from "../components/Layout";
 import Table from "@/components/common/Table";
+import React, { useState } from 'react';
 
-const mockData = [
-  { id: 1, name: "project1" },
-  { id: 2, name: "project2" },
-  { id: 3, name: "project3" },
-];
+function TodoApp() {
+  // Stan przechowujący listę zadań
+  const [tasks, setTasks] = useState([]);
 
-const ProjectsPage = () => {
-  const columns = [
-      { Header: "ID", accessor: "id" },
-      {
-        Header: "Name",
-        accessor: "name",
-      },
-    ];
+  // Funkcja do dodawania nowego zadania
+  const addTask = (task) => {
+    setTasks([...tasks, task]);
+  };
+
+  // Funkcja do usuwania zadania
+  const removeTask = (index) => {
+    const updatedTasks = tasks.filter((_, i) => i !== index);
+    setTasks(updatedTasks);
+  };
+
   return (
-    <Layout>
-      <Heading marginBottom="30px">Projects</Heading>
-      <Table
-        columns={columns}
-        data={mockData}
-        searchBar={false}
-        pagination={false}
+    <div className="todo-app">
+      <h1>Lista zadań do zrobienia</h1>
+      <ul>
+        {tasks.map((task, index) => (
+          <li key={index}>
+            {task}
+            <button onClick={() => removeTask(index)}>Usuń</button>
+          </li>
+        ))}
+      </ul>
+      <input
+        type="text"
+        placeholder="Dodaj nowe zadanie"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            addTask(e.target.value);
+            e.target.value = '';
+          }
+        }}
       />
-    </Layout>
+    </div>
   );
-};
-
-ProjectsPage.auth = false;
+}
 
 export default ProjectsPage;
