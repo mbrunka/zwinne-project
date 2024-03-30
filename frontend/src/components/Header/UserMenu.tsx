@@ -13,30 +13,25 @@ import React from "react";
 import { Power, Settings } from "react-feather";
 
 import Avatar from "@/components/common/Avatar";
-import { clearTokenCookie } from "@/utils/cookies";
-import axios from "axios";
+import { signOut } from "@/utils/signOut";
+import { getCurrentRole } from "@/utils/cookies";
 
 const UserMenu = (): React.ReactElement => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const role = getCurrentRole();
 
   return (
     <Menu>
       <MenuButton>
         <Avatar
           showBorder
-          src={session?.user?.profile?.picture}
-          name={`${session?.user?.firstName || ""} ${
-            session?.user?.lastName || ""
-          }`}
         />
       </MenuButton>
 
       <MenuList>
         <Box p=".5rem">
-          <Text fontWeight="500">{session?.user?.email || ""}</Text>
           <Text fontSize=".75rem" lineHeight="1rem" mt=".125rem">
-            Admin
+            {role}
           </Text>
         </Box>
 
@@ -49,8 +44,7 @@ const UserMenu = (): React.ReactElement => {
         <MenuItem
           icon={<Power />}
           onClick={async () => {
-            // await axios.post("/logout");
-            clearTokenCookie();
+            signOut();
             router.push("/signin");
           }}
         >

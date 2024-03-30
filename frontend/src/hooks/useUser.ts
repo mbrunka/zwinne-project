@@ -1,6 +1,5 @@
 import { useSettings } from "@/components/SettingsContext";
-import { clearTokenCookie } from "@/utils/cookies";
-import axios from "axios";
+import { signOut } from "@/utils/signOut";
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -38,7 +37,7 @@ export function useUser({ redirectTo = null, redirectIfFound = false } = {}): [
   useEffect(async () => {
     if (!error || !session?.currentRole?.id) return;
     // await axios.post("/logout");
-    clearTokenCookie();
+    signOut()
     router.push("/signin");
   }, [error, router, session?.currentRole?.id]);
 

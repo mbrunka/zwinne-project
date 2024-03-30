@@ -56,13 +56,14 @@ const Signup = () => {
       nrIndeksu: data?.indexNo,
       stacjonarny: data?.stationary,
     };
-
+console.log(dataToSend)
     try{
       await axios
       .post("auth/register", {
         ...dataToSend,
       })
       .then(async (data) => {
+        console.log(data)
         setError(null);
         router.push({
           pathname: "/signin",

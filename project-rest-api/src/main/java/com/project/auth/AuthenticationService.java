@@ -64,7 +64,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
-                .role(Role.KANDYDAT_N)
+                .role(Role.CANDIDATE_N)
                 .build();
         userRepository.save(user);
         var jwtAccessToken = jwtUtil.generateAccessToken(user);
@@ -87,6 +87,7 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .authToken(jwtAccessToken)
                 .refreshToken(jwtRefreshToken)
+                .role(user.getRole().name())
                 .build();
     }
 

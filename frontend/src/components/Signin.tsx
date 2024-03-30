@@ -1,4 +1,4 @@
-import { setTokenCookie } from "@/utils/cookies";
+import { setRoleCookie, setTokenCookie } from "@/utils/cookies";
 import {
   Alert,
   AlertIcon,
@@ -56,6 +56,7 @@ const Signin = (): React.ReactElement => {
       setSuccess(true);
       setError(null);
       setTokenCookie(res?.data?.token);
+      setRoleCookie(res?.data?.role);
       reset();
       router.push("/");
     }
