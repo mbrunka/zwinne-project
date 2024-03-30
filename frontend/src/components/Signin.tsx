@@ -19,6 +19,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useUserState } from "../../contexts/userContext";
 import AlertMessage from "./common/AlertMessage";
 
 type Inputs = {
@@ -38,6 +39,7 @@ const Signin = (): React.ReactElement => {
   const session = useSession();
   const router = useRouter();
   const { callbackUrl = "/" } = router.query;
+  const { setUserEmail } = useUserState();
 
   const errorKeys = {
     WrongCredentials: "Incorrect password or email address",
@@ -46,25 +48,25 @@ const Signin = (): React.ReactElement => {
   };
 
   const onSubmit = async (data: Inputs) => {
-   try{
+    try {
       const res = await axios.post("/auth/login", data);
 
-    if (res?.error) {
-      setSuccess(false);
-      setError(res.error);
-    } else {
-      setSuccess(true);
-      setError(null);
-      setTokenCookie(res?.data?.token);
-      setRoleCookie(res?.data?.role);
-      reset();
-      router.push("/");
-    }
-   } catch (error) {
+      if (res?.error) {
+        setSuccess(false);
+        setError(res.error);
+      } else {
+        setSuccess(true);
+        setError(null);
+        setTokenCookie(res?.data?.token, res?.data?.refreshToken, res?.data?.email);
+        setRoleCookie(res?.data?.role);
+        setUserEmail(data?.email);
+        reset();
+        router.push("/");
+      }
+    } catch (error) {
       setSuccess(false);
       setError(error);
-   }
-    
+    }
   };
 
   useEffect(() => {
