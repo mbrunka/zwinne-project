@@ -1,5 +1,6 @@
 import { Flex, Image, Text } from '@chakra-ui/react';
 import Layout from '../components/Layout';
+import { getCurrentRole } from '@/utils/cookies';
 
 const Index = () => {
    return (

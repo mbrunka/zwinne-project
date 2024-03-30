@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
-    private String authToken;
-    private String refreshToken;
-    private String role;
+public class VerifyCandidateRequest {
+    private String email;
 }

@@ -1,9 +1,12 @@
 package com.project.auth;
 
 import com.project.auth.request.*;
+import com.project.model.User;
+import com.project.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -53,5 +56,18 @@ public class AuthenticationController {
             @RequestBody GetUserRequest request
     ) {
         return ResponseEntity.ok(service.getUser(request));
+    }
+
+    @GetMapping("/getCandidates")
+    public ResponseEntity<GetCandidatesResponse> getCandidates(
+    ) {
+        return ResponseEntity.ok(service.getCandidates());
+    }
+
+    @PutMapping("/verifyCandidate")
+    public ResponseEntity<?> verifyCandidate(
+            @RequestBody VerifyCandidateRequest request
+    ) {
+        return ResponseEntity.ok(service.verifyCandidate(request));
     }
 }

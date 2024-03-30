@@ -26,11 +26,9 @@ type Inputs = {
   passwordRepeat: string;
   firstName: string;
   lastName: string;
-  indexNo: number;
-  stationary?: boolean;
 };
 
-const Signup = () => {
+const TecherSignup = () => {
   const {
     control,
     register,
@@ -52,12 +50,11 @@ const Signup = () => {
       lastName: data?.lastName,
       email: data.email,
       password: data.password,
-      nrIndeksu: data?.indexNo,
-      stacjonarny: data?.stationary,
     };
+
     try {
       await axios
-        .post("auth/register", {
+        .post("auth/registerTeacher", {
           ...dataToSend,
         })
         .then(async (data) => {
@@ -77,7 +74,7 @@ const Signup = () => {
     }
   };
 
-  console.log(error)
+  console.log(error);
 
   return (
     <Box width="100%" paddingTop="40px" display="flex" justifyContent="center">
@@ -100,46 +97,28 @@ const Signup = () => {
           className={`w-[32rem] ${isSubmitting ? "opacity-50" : ""}`}
         >
           <Heading size="md" mb="30px">
-            Sign up
+            Sign up as a TEACHER
           </Heading>
 
           {error && (
             <AlertMessage
               status="error"
-              message="An account with given email or index number already exists"
+              message="An account with given email already exists"
             />
           )}
-
-          <SimpleGrid columns={2} width="100%" spacingX="1rem" spacingY="2rem">
-            <FormControl isRequired isInvalid={!!errors?.email}>
-              <FormLabel>Email</FormLabel>
-              <Input
-                {...register("email", {
-                  required: true,
-                  validate: (value) =>
-                    isEmail(value) || "Invalid email address",
-                })}
-              />
-              {!!errors?.email && (
-                <FormErrorMessage>Field required</FormErrorMessage>
-              )}
-            </FormControl>
-
-            <FormControl isRequired isInvalid={!!errors?.indexNo}>
-              <FormLabel>Index number</FormLabel>
-              <Input
-                type="number"
-                {...register("indexNo", {
-                  required: true,
-                  minLength: 6,
-                  maxLength: 6,
-                })}
-              />
-              {!!errors?.indexNo && (
-                <FormErrorMessage>Wrong index number</FormErrorMessage>
-              )}
-            </FormControl>
-
+          <FormControl isRequired isInvalid={!!errors?.email}>
+            <FormLabel>Email</FormLabel>
+            <Input
+              {...register("email", {
+                required: true,
+                validate: (value) => isEmail(value) || "Invalid email address",
+              })}
+            />
+            {!!errors?.email && (
+              <FormErrorMessage>Field required</FormErrorMessage>
+            )}
+          </FormControl>
+          <SimpleGrid columns={2} width="100%" spacingX="1rem" spacingY="2rem" marginTop="1rem">
             <FormControl isRequired isInvalid={!!errors?.firstName}>
               <FormLabel>First name</FormLabel>
               <Input
@@ -194,17 +173,6 @@ const Signup = () => {
               {!!errors?.passwordRepeat && (
                 <FormErrorMessage>Field required</FormErrorMessage>
               )}
-            </FormControl>
-
-            <FormControl mt="0.5rem">
-              <Flex>
-                <Controller
-                  name="stationary"
-                  control={control}
-                  render={({ field }) => <Checkbox {...field} />}
-                />
-                <FormLabel variant="simple">Stationary studies</FormLabel>
-              </Flex>
             </FormControl>
           </SimpleGrid>
 
@@ -280,4 +248,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default TecherSignup;

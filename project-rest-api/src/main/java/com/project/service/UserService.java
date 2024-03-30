@@ -18,4 +18,6 @@ public interface UserService {
     Optional<User> getUser(String email);
 
     List<User> getUsers();
+
+    List<User> getCandidates();
 }

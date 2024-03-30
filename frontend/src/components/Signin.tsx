@@ -1,4 +1,4 @@
-import { setTokenCookie } from "@/utils/cookies";
+import { setRoleCookie, setTokenCookie } from "@/utils/cookies";
 import {
   Alert,
   AlertIcon,
@@ -19,6 +19,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useUserState } from "../../contexts/userContext";
 import AlertMessage from "./common/AlertMessage";
 
 type Inputs = {
@@ -38,6 +39,7 @@ const Signin = (): React.ReactElement => {
   const session = useSession();
   const router = useRouter();
   const { callbackUrl = "/" } = router.query;
+  const { setUserEmail } = useUserState();
 
   const errorKeys = {
     WrongCredentials: "Incorrect password or email address",
@@ -46,24 +48,25 @@ const Signin = (): React.ReactElement => {
   };
 
   const onSubmit = async (data: Inputs) => {
-   try{
+    try {
       const res = await axios.post("/auth/login", data);
 
-    if (res?.error) {
-      setSuccess(false);
-      setError(res.error);
-    } else {
-      setSuccess(true);
-      setError(null);
-      setTokenCookie(res?.data?.token);
-      reset();
-      router.push("/");
-    }
-   } catch (error) {
+      if (res?.error) {
+        setSuccess(false);
+        setError(res.error);
+      } else {
+        setSuccess(true);
+        setError(null);
+        setTokenCookie(res?.data?.token, res?.data?.refreshToken, res?.data?.email);
+        setRoleCookie(res?.data?.role);
+        setUserEmail(data?.email);
+        reset();
+        router.push("/");
+      }
+    } catch (error) {
       setSuccess(false);
       setError(error);
-   }
-    
+    }
   };
 
   useEffect(() => {
@@ -160,7 +163,10 @@ const Signin = (): React.ReactElement => {
             </Button>
 
             <Button variant="ghost" className="mt-8">
-              <Link href="/signup">Sign up</Link>
+              <Link href="/signup">Sign up as a STUDENT</Link>
+            </Button>
+            <Button variant="ghost" className="mt-8">
+              <Link href="/teacher-signup">Sign up as a TEACHER</Link>
             </Button>
             {/* TODO display when forgot-password page ready */}
             {/* <Link href="/forgot-password" className="mt-16 hover:underline">

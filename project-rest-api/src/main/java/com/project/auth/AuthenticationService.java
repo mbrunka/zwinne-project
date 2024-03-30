@@ -10,10 +10,14 @@ import com.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -87,6 +91,7 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .authToken(jwtAccessToken)
                 .refreshToken(jwtRefreshToken)
+                .role(user.getRole().name())
                 .build();
     }
 
@@ -121,5 +126,20 @@ public class AuthenticationService {
                 .build();
     }
 
+    public GetCandidatesResponse getCandidates() {
+        var candidates = userRepository.findAllCandidates();
+        return GetCandidatesResponse.builder().users(candidates).build();
+    }
 
+    public Number verifyCandidate(VerifyCandidateRequest request) {
+        var user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow();
+        if (user == null) {
+            return 404;
+        }
+
+        user.setRole(Role.NAUCZYCIEL);
+        userRepository.save(user);
+        return 200;
+    }
 }

@@ -76,7 +76,6 @@ const theme = extendTheme({
       Button: {
          baseStyle: {
             transition: "all .25s ease-in-out",
-            textTransform: 'capitalize',
             textAlign: "center",
             borderRadius: 4,
             color: "white",
@@ -196,7 +195,6 @@ const theme = extendTheme({
       },
       Heading: {
          baseStyle: {
-            textTransform: 'capitalize',
             lineHeight: 'auto'
          },
          sizes: {
