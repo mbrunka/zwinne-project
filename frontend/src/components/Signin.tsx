@@ -163,7 +163,10 @@ const Signin = (): React.ReactElement => {
             </Button>
 
             <Button variant="ghost" className="mt-8">
-              <Link href="/signup">Sign up</Link>
+              <Link href="/signup">Sign up as a STUDENT</Link>
+            </Button>
+            <Button variant="ghost" className="mt-8">
+              <Link href="/teacher-signup">Sign up as a TEACHER</Link>
             </Button>
             {/* TODO display when forgot-password page ready */}
             {/* <Link href="/forgot-password" className="mt-16 hover:underline">

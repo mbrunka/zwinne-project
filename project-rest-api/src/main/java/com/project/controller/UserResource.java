@@ -11,14 +11,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class UserResource {
     private final UserService userService;
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/users/all")
     public ResponseEntity<List<User>> getUsers() {
         return ResponseEntity.ok().body(userService.getUsers());
+    }
+
+    @GetMapping("/candidates")
+    public ResponseEntity<List<User>> getCandidates() {
+        return ResponseEntity.ok().body(userService.getCandidates());
     }
 
     @PostMapping("/user/role")

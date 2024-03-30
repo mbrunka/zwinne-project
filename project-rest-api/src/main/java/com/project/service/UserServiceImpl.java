@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,5 +55,13 @@ public class UserServiceImpl implements UserService {
     public List<User> getUsers() {
         logger.info("Fetching all users");
         return userRepository.findAll();
+    }
+
+    @Override
+    public List<User> getCandidates() {
+        logger.info("Fetching all teacher candidates");
+        return userRepository.findAll().stream()
+                .filter(user -> user.getRole().equals(Role.KANDYDAT_N))
+                .collect(Collectors.toList());
     }
 }

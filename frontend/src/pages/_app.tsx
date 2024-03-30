@@ -1,5 +1,5 @@
 import { SettingsProvider } from "@/components/SettingsContext";
-import { setTokenCookie } from "@/utils/cookies";
+import { getCurrentRole, setTokenCookie } from "@/utils/cookies";
 import { ChakraProvider, Flex, Spinner } from "@chakra-ui/react";
 import { Figtree, Nunito_Sans } from "@next/font/google";
 import axios from "axios";
@@ -60,7 +60,7 @@ axios.interceptors.response.use(
     const originalRequest = error.config;
 
     // Check if the error is due to token expiration
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error?.response?.status === 403 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       // Attempt to refresh the token
@@ -117,15 +117,13 @@ function App({ Component, pageProps }: CustomAppProps) {
   const [session, setSession] = React.useState<Session>(pageProps.session);
   const [userEmail, setUserEmail] = useState<string>("");
 
-  console.log(userEmail);
-
   const contextValue = {
     email: userEmail,
     setUserEmail,
   };
 
   const AuthComponent = Component.auth ? (
-    <Auth>
+    <Auth roles={Component?.roles}>
       <Component {...pageProps} />
     </Auth>
   ) : (
@@ -157,18 +155,31 @@ function App({ Component, pageProps }: CustomAppProps) {
   );
 }
 
-function Auth({ children }) {
+function Auth({
+  roles,
+  children,
+}: {
+  roles?: string[];
+  children: React.ReactElement;
+}) {
   const { data: session, status } = useSession();
   const jwtToken = Cookies.get("token");
   //@ts-ignore
   const isUser = !!session?.user?.id;
   const router = useRouter();
   const { locale, asPath } = router;
+  const role = getCurrentRole();
 
   React.useEffect(() => {
     if (status === "loading") return; // Do nothing while loading
-    if (!jwtToken) router?.push("/signin"); // If not authenticated, force log in
-  }, [status, isUser, jwtToken, router]);
+    if (!!jwtToken && asPath == "/signin") router?.push("/");
+    if (!jwtToken && asPath != "/signin") router?.push("/signin"); // If not authenticated, force log in
+    if (role == "KANDYDAT_N" && asPath != "/candidate-info")
+      router?.push("/candidate-info");
+    if (roles && roles?.length > 0 && !roles.includes(role)) {
+      router?.push("/");
+    }
+  }, [status, isUser, jwtToken, router, role, asPath, roles]);
 
   if (jwtToken) {
     return children;
