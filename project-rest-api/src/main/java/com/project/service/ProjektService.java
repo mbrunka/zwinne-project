@@ -10,6 +10,8 @@ public interface ProjektService {
 
     Optional<Projekt> getProjekt(Integer projektId);
 
+    Optional<Projekt> getProjekt(String joinCode);
+
     Projekt setProjekt(Projekt projekt);
 
     void deleteProjekt(Integer projektId);

@@ -1,30 +1,31 @@
-package com.project.controller;
+package com.project.controller.projekt;
 
 import com.project.model.Projekt;
+import com.project.model.Student;
+import com.project.model.User;
 import com.project.service.ProjektService;
-import jakarta.validation.Valid;
+import com.project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
+import java.util.Optional;
 
-
-// dzięki adnotacji @RestController klasa jest traktowana jako zarządzany
 
 @RestController // przez kontener Springa REST-owy kontroler obsługujący sieciowe żądania
 @CrossOrigin
 @RequestMapping("/api/v1/projekty") // adnotacja @RequestMapping umieszczona w tym miejscu pozwala definiować
 public class ProjektRestController { // cześć wspólną adresu, wstawianą przed wszystkimi poniższymi ścieżkami
     private final ProjektService projektService; //serwis jest automatycznie wstrzykiwany poprzez konstruktor
+    private UserService userService;
 
     @Autowired
     public ProjektRestController(ProjektService projektService) {
         this.projektService = projektService;
+        this.userService = userService;
     }
 
     // PRZED KAŻDĄ Z PONIŻSZYCH METOD JEST UMIESZCZONA ADNOTACJA (@GetMapping, PostMapping, ... ), KTÓRA OKREŚLA
@@ -33,36 +34,6 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
     @GetMapping("/{projektId}")
     ResponseEntity<Projekt> getProjekt(@PathVariable Integer projektId) {// @PathVariable oznacza, że wartość
         return ResponseEntity.of(projektService.getProjekt(projektId)); // parametru przekazywana jest w ścieżce
-    }
-
-    // @Valid włącza automatyczną walidację na podstawie adnotacji zawartych
-    // w modelu np. NotNull, Size, NotEmpty itd. (z jakarta.validation.constraints.*)
-    @PostMapping()
-    ResponseEntity<Void> createProjekt(@Valid @RequestBody Projekt projekt) {// @RequestBody oznacza, że dane
-        // projektu (w formacie JSON) są
-        Projekt createdProjekt = projektService.setProjekt(projekt); // przekazywane w ciele żądania
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest() // link wskazujący utworzony projekt
-                .path("/{projektId}").buildAndExpand(createdProjekt.getProjektId()).toUri();
-        return ResponseEntity.created(location).build(); // zwracany jest kod odpowiedzi 201 - Created
-    } // z linkiem location w nagłówku
-
-    @PutMapping("/{projektId}")
-    public ResponseEntity<Void> updateProjekt(@Valid @RequestBody Projekt projekt,
-                                              @PathVariable Integer projektId) {
-        return projektService.getProjekt(projektId)
-                .map(p -> {
-                    projektService.setProjekt(projekt);
-                    return new ResponseEntity<Void>(HttpStatus.OK); // 200 (można też zwracać 204 - No content)
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build()); // 404 - Not found
-    }
-
-    @DeleteMapping("/{projektId}")
-    public ResponseEntity<Void> deleteProjekt(@PathVariable Integer projektId) {
-        return projektService.getProjekt(projektId).map(p -> {
-            projektService.deleteProjekt(projektId);
-            return new ResponseEntity<Void>(HttpStatus.OK); // 200
-        }).orElseGet(() -> ResponseEntity.notFound().build()); // 404 - Not found
     }
 
     //Przykład żądania wywołującego metodę: http://localhost:8080/api/projekty?page=0&size=10&sort=nazwa,desc
@@ -76,5 +47,25 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
     @GetMapping(params = "nazwa")
     Page<Projekt> getProjektyByNazwa(@RequestParam String nazwa, Pageable pageable) {
         return projektService.searchByNazwa(nazwa, pageable);
+    }
+
+
+    @GetMapping(value = "/join", params = "joinCode")
+    public void joinProject(String joinCode, @AuthenticationPrincipal User currentUser) {
+        Optional<Projekt> project = projektService.getProjekt(joinCode);
+        if (project.isPresent()) {
+            project.get().getStudents().add(currentUser.getStudent());
+            projektService.setProjekt(project.get());
+        }
+    }
+
+    @GetMapping(value = "/leave", params = "projektId")
+    public void leaveProject(Integer projektId, @AuthenticationPrincipal User currentUser) {
+        Optional<Projekt> project = projektService.getProjekt(projektId);
+        if (project.isPresent()) {
+            Student student = userService.getUser(currentUser.getEmail()).get().getStudent();
+            project.get().getStudents().remove(student);
+            projektService.setProjekt(project.get());
+        }
     }
 }

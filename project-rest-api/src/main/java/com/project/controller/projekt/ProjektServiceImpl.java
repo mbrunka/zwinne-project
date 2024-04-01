@@ -1,8 +1,9 @@
-package com.project.service;
+package com.project.controller.projekt;
 
 import com.project.model.Projekt;
 import com.project.repository.ProjektRepository;
 import com.project.repository.ZadanieRepository;
+import com.project.service.ProjektService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +29,15 @@ public class ProjektServiceImpl implements ProjektService {
     }
 
     @Override
+    public Optional<Projekt> getProjekt(String joinCode)  {
+        return projektRepository.findByJoinCode(joinCode);
+    }
+
+    @Override
     public Projekt setProjekt(Projekt projekt) {
+        if(projekt.getJoinCode() == null) {
+            projekt.setJoinCode(Projekt.generateJoinCode());
+        }
         return projektRepository.save(projekt);
     }
 
@@ -48,4 +57,5 @@ public class ProjektServiceImpl implements ProjektService {
     public Page<Projekt> searchByNazwa(String nazwa, Pageable pageable) {
         return projektRepository.findByNazwaContainingIgnoreCase(nazwa, pageable);
     }
+
 }

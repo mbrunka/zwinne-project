@@ -7,11 +7,11 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
 public interface StudentService {
-    Optional<Student> getStudent(Integer projektId);
+    Optional<Student> getStudent(Integer studentId);
 
-    Student setStudent(Student projekt);
+    Student setStudent(Student student);
 
-    void deleteStudent(Integer projektId);
+    void deleteStudent(Integer studentId);
 
     Page<Student> getStudenci(Pageable pageable);
 

@@ -1,12 +1,9 @@
 package com.project.auth;
 
 import com.project.auth.request.*;
-import com.project.model.User;
-import com.project.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -27,7 +24,14 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> registerTeacher(
             @RequestBody TeacherRegisterRequest request
     ) {
-        return ResponseEntity.ok(service.registerTeacher(request));
+        return ResponseEntity.ok(service.selfRegisterTeacher(request));
+    }
+
+    @PostMapping("/admin/registerTeacher")
+    public ResponseEntity<AuthenticationResponse> adminRegisterTeacher(
+            @RequestBody TeacherRegisterRequest request
+    ) {
+        return ResponseEntity.ok(service.fullRegisterTeacher(request));
     }
 
     @PostMapping("/login")

@@ -1,5 +1,7 @@
 package com.project.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +22,7 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long studentId;
 
+    @JsonManagedReference
     @OneToOne
     @MapsId
     private User user;
@@ -28,7 +31,21 @@ public class Student {
 
     private Boolean stacjonarny;
 
-    @ManyToMany(mappedBy = "studenci")
+    @JsonBackReference
+    @ManyToMany
+    @JoinTable(name = "projekt_student",
+            joinColumns = {@JoinColumn(name = "student_id")},
+            inverseJoinColumns = {@JoinColumn(name = "projekt_id")})
     private Set<Projekt> projekty;
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((nrIndeksu == null) ? 0 : nrIndeksu.hashCode());
+        // other fields
+        // do not include User in Student's hashCode()
+        return result;
+    }
 }
 
