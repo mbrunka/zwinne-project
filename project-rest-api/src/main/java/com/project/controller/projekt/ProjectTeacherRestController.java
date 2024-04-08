@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -18,7 +19,7 @@ import java.net.URI;
 
 @RestController
 @CrossOrigin
-//@PreAuthorize("hasRole('NAUCZYCIEL')")
+@PreAuthorize("hasAnyRole('NAUCZYCIEL', 'ADMIN')")
 @RequestMapping("/api/v1/projekty/teacher")
 public class ProjectTeacherRestController {
     private final ProjektService projektService;
@@ -85,6 +86,11 @@ public class ProjectTeacherRestController {
         }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-
+    @GetMapping("/my")
+    public ResponseEntity<Projekt> getMyProjekt(@AuthenticationPrincipal User currentUser) {
+        return projektService.getProjektByTeacherTeacherId(currentUser.getTeacher().getTeacherId())
+                .map(p -> new ResponseEntity<Projekt>(p, HttpStatus.OK))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
 }

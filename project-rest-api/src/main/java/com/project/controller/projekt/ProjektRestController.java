@@ -8,11 +8,14 @@ import com.project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.Set;
 
 
 @RestController // przez kontener Springa REST-owy kontroler obsługujący sieciowe żądania
@@ -23,7 +26,7 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
     private UserService userService;
 
     @Autowired
-    public ProjektRestController(ProjektService projektService) {
+    public ProjektRestController(ProjektService projektService, UserService userService) {
         this.projektService = projektService;
         this.userService = userService;
     }
@@ -51,7 +54,7 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
 
 
     @GetMapping(value = "/join", params = "joinCode")
-    public void joinProject(String joinCode, @AuthenticationPrincipal User currentUser) {
+    public void joinProject(@RequestParam String joinCode, @AuthenticationPrincipal User currentUser) {
         Optional<Projekt> project = projektService.getProjekt(joinCode);
         if (project.isPresent()) {
             project.get().getStudents().add(currentUser.getStudent());
@@ -67,5 +70,12 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
             project.get().getStudents().remove(student);
             projektService.setProjekt(project.get());
         }
+    }
+
+    @PreAuthorize("hasRole('STUDENT')")
+    @GetMapping("/my")
+    public ResponseEntity<Set<Projekt>> getMyProjects(@AuthenticationPrincipal User currentUser) {
+        Set<Projekt> projekts = projektService.getProjektyByStudentId(currentUser.getStudent().getStudentId());
+        return ResponseEntity.ok(projekts);
     }
 }
