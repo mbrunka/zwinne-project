@@ -4,8 +4,10 @@ import com.project.auth.request.*;
 import com.project.config.JwtUtil;
 import com.project.model.Role;
 import com.project.model.Student;
+import com.project.model.Teacher;
 import com.project.model.User;
 import com.project.repository.StudentRepository;
+import com.project.repository.TeacherRepository;
 import com.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -25,6 +27,7 @@ public class AuthenticationService {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
@@ -61,7 +64,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse registerTeacher(TeacherRegisterRequest request) {
+    public AuthenticationResponse selfRegisterTeacher(TeacherRegisterRequest request) {
         logger.info("REGISTER TEACHER: firstName: " + request.getFirstName() + " lastName: " + request.getLastName() + " email: " + request.getEmail());
         var user = User.builder()
                 .email(request.getEmail())
@@ -70,6 +73,31 @@ public class AuthenticationService {
                 .lastName(request.getLastName())
                 .role(Role.KANDYDAT_N)
                 .build();
+        userRepository.save(user);
+        var jwtAccessToken = jwtUtil.generateAccessToken(user);
+        var jwtRefreshToken = jwtUtil.generateRefreshToken(user);
+        return AuthenticationResponse.builder()
+                .authToken(jwtAccessToken)
+                .refreshToken(jwtRefreshToken)
+                .build();
+    }
+
+    public AuthenticationResponse fullRegisterTeacher(TeacherRegisterRequest request) {
+        logger.info("REGISTER TEACHER: firstName: " + request.getFirstName() + " lastName: " + request.getLastName() + " email: " + request.getEmail());
+        var user = User.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                // TODO: change to KANDYDAT_N after implementing roles change in both frontend and backend
+                .role(Role.NAUCZYCIEL)
+                .build();
+        userRepository.save(user);
+        var teacher = Teacher.builder()
+                .user(user)
+                .build();
+        teacherRepository.save(teacher);
+        user.setTeacher(teacher);
         userRepository.save(user);
         var jwtAccessToken = jwtUtil.generateAccessToken(user);
         var jwtRefreshToken = jwtUtil.generateRefreshToken(user);

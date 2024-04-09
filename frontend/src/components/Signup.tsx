@@ -75,6 +75,8 @@ const Signup = () => {
     }
   };
 
+  console.log(error)
+
   return (
     <Box width="100%" paddingTop="40px" display="flex" justifyContent="center">
       <Box width="70%" maxW="500px" display="flex" flexDirection="column">

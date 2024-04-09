@@ -5,10 +5,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface ProjektService {
 
     Optional<Projekt> getProjekt(Integer projektId);
+
+    Optional<Projekt> getProjekt(String joinCode);
 
     Projekt setProjekt(Projekt projekt);
 
@@ -18,4 +21,7 @@ public interface ProjektService {
 
     Page<Projekt> searchByNazwa(String nazwa, Pageable pageable);
 
+    Optional<Projekt> getProjektByTeacherTeacherId(Long teacherId);
+
+    Set<Projekt> getProjektyByStudentId(Long studentId);
 }

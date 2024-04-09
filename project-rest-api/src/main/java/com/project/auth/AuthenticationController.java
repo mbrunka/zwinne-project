@@ -27,7 +27,14 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> registerTeacher(
             @RequestBody TeacherRegisterRequest request
     ) {
-        return ResponseEntity.ok(service.registerTeacher(request));
+        return ResponseEntity.ok(service.selfRegisterTeacher(request));
+    }
+
+    @PostMapping("/admin/registerTeacher")
+    public ResponseEntity<AuthenticationResponse> adminRegisterTeacher(
+            @RequestBody TeacherRegisterRequest request
+    ) {
+        return ResponseEntity.ok(service.fullRegisterTeacher(request));
     }
 
     @PostMapping("/login")
