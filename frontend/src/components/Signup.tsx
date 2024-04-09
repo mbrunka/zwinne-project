@@ -68,16 +68,12 @@ const Signup = () => {
           });
         })
         .catch((error) => {
-          console.log(error);
           setError(true);
         });
     } catch {
-      console.log(error);
       setError(true);
     }
   };
-
-  console.log(error)
 
   return (
     <Box width="100%" paddingTop="40px" display="flex" justifyContent="center">
