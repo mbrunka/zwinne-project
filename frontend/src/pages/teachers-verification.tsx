@@ -1,15 +1,25 @@
+import CustomAlertDialog from "@/components/common/AlertDialog";
+import Table from "@/components/common/Table";
 import { useToastPromise } from "@/hooks/useToast";
-import { Button, Flex, Spinner, Text, Heading } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Heading,
+  Spinner,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
 import axios from "axios";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import useSWR from "swr";
 import Layout from "../components/Layout";
-import Table from "@/components/common/Table";
 
 const TeachersVerificationPage = () => {
-  const { data,  mutate, isValidating } = useSWR("/auth/getCandidates");
+  const { data, mutate, isValidating } = useSWR("/auth/getCandidates");
   const toast = useToastPromise();
   const [isGenerating, setIsGenerating] = useState<string | null>(null);
+  const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
+  const modal = useDisclosure();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const verifyCandidate = async (email: string) => {
@@ -20,12 +30,22 @@ const TeachersVerificationPage = () => {
         .then(() => {
           mutate();
           setIsGenerating(null);
+          modal.onClose();
         })
         .catch(() => {
           setIsGenerating(null);
+          modal.onClose();
         })
     );
   };
+
+  const openAlertModal = useCallback(
+    (email: string) => {
+      setSelectedEmail(email);
+      modal.onOpen();
+    },
+    [modal]
+  );
 
   const columns = useMemo(
     () => [
@@ -45,7 +65,7 @@ const TeachersVerificationPage = () => {
               size="sm"
               isLoading={isGenerating == email}
               onClick={async () => {
-                await verifyCandidate(email);
+                await openAlertModal(email);
               }}
             >
               Verify
@@ -54,22 +74,31 @@ const TeachersVerificationPage = () => {
         ),
       },
     ],
-    [isGenerating, verifyCandidate]
+    [isGenerating, openAlertModal]
   );
 
   return (
     <Layout>
       <Heading marginBottom="30px">Teachers to verify</Heading>
-        {isValidating && !data?.users && <Spinner />}
-        {data?.users?.length == 0 && <Text>No candidates to verify</Text>}
-        {data?.users?.length > 0 && (
-          <Table
-            columns={columns}
-            data={data?.users}
-            searchBar={false}
-            pagination={false}
-          />
-        )}
+      {isValidating && !data?.users && <Spinner />}
+      {data?.users?.length == 0 && <Text>No candidates to verify</Text>}
+      {data?.users?.length > 0 && (
+        <Table
+          columns={columns}
+          data={data?.users}
+          searchBar={false}
+          pagination={false}
+        />
+      )}
+      <CustomAlertDialog
+        isOpen={modal.isOpen}
+        onClose={modal.onClose}
+        bodyText="Are you sure You want to verify this candidate?"
+        headerText="Candidate verification"
+        onConfirm={async () => {
+          await verifyCandidate(selectedEmail ?? "");
+        }}
+      />
     </Layout>
   );
 };
