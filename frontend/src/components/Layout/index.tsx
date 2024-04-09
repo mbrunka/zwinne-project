@@ -1,9 +1,9 @@
+import { getCurrentRole } from "@/utils/cookies";
 import { Box } from "@chakra-ui/react";
 import React from "react";
-import { Home, Layers, Star, Users } from "react-feather";
+import { Home, Layers, Users } from "react-feather";
 import Header from "../Header";
 import NavItem from "../common/NavItem";
-import { getCurrentRole } from "@/utils/cookies";
 
 type LayoutProps = {
   hideSideBar?: boolean;
@@ -11,8 +11,7 @@ type LayoutProps = {
 };
 
 const Layout = ({ hideSideBar = false, children }: LayoutProps) => {
-   const role= getCurrentRole();
-   console.log(role);
+  const role = getCurrentRole();
   return (
     <Box bg="background.light">
       <Header />
@@ -32,7 +31,13 @@ const Layout = ({ hideSideBar = false, children }: LayoutProps) => {
           <NavItem label="Dashboard" href="/" ico={Home} />
 
           <NavItem label="Projects" href="/projects" ico={Layers} />
-          {role=="NAUCZYCIEL" && <NavItem label="Teachers verification" href="/teachers-verification" ico={Users} />}
+          {role == "NAUCZYCIEL" && (
+            <NavItem
+              label="Teachers verification"
+              href="/teachers-verification"
+              ico={Users}
+            />
+          )}
           {/* <NavItem
                label={t('navigation.subitems')}
                href="/products"

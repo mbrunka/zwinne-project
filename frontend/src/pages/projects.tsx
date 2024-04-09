@@ -44,6 +44,6 @@ const ProjectsPage = () => {
   );
 };
 
-ProjectsPage.auth = false;
+ProjectsPage.auth = true;
 
 export default ProjectsPage;
