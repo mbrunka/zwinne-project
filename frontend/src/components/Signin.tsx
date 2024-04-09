@@ -57,7 +57,11 @@ const Signin = (): React.ReactElement => {
       } else {
         setSuccess(true);
         setError(null);
-        setTokenCookie(res?.data?.token, res?.data?.refreshToken, res?.data?.email);
+        setTokenCookie(
+          res?.data?.token,
+          res?.data?.refreshToken,
+          res?.data?.email
+        );
         setRoleCookie(res?.data?.role);
         setUserEmail(data?.email);
         reset();
@@ -104,6 +108,13 @@ const Signin = (): React.ReactElement => {
             <AlertMessage
               status="success"
               message="Registarion successfull, You can log in now"
+            />
+          )}
+
+          {router?.query?.candidateRegistered && (
+            <AlertMessage
+              status="success"
+              message="Registarion successfull, You can log in after verification"
             />
           )}
 

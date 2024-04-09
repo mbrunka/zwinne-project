@@ -61,7 +61,7 @@ const TecherSignup = () => {
           setError(null);
           router.push({
             pathname: "/signin",
-            query: { registered: true },
+            query: { candidateRegistered: true },
           });
         })
         .catch((error) => {
