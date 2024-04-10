@@ -50,7 +50,6 @@ const Signin = (): React.ReactElement => {
   const onSubmit = async (data: Inputs) => {
     try {
       const res = await axios.post("/auth/login", data);
-
       if (res?.error) {
         setSuccess(false);
         setError(res.error);
@@ -58,9 +57,9 @@ const Signin = (): React.ReactElement => {
         setSuccess(true);
         setError(null);
         setTokenCookie(
-          res?.data?.token,
+          res?.data?.authToken,
           res?.data?.refreshToken,
-          res?.data?.email
+          data?.email
         );
         setRoleCookie(res?.data?.role);
         setUserEmail(data?.email);

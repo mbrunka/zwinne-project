@@ -33,5 +33,5 @@ export const getCurrentRole = () => {
 }
 
 export const clearRoleCookie = () => {
-    Cookies.set('token', '')
+    Cookies.set('role', '')
 }

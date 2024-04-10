@@ -39,7 +39,7 @@ axios.interceptors.request.use(async (config) => {
     jwtToken?.length > 0
       ? {
           ...config.headers,
-          Authorization: jwtToken,
+          Authorization: `Bearer ${jwtToken}`,
           "X-API-Key": publicRuntimeConfig.apiKey,
           "Content-Type": "application/json",
         }
@@ -68,19 +68,19 @@ axios.interceptors.response.use(
         const refreshToken = Cookies.get("refreshToken");
         const email = Cookies.get("email");
         const response = await axios.post(
-          `${publicRuntimeConfig.apiUrl}/refresh`,
+          `${publicRuntimeConfig.apiUrl}/auth/refresh`,
           { email: email, refreshToken: refreshToken }
         );
 
         // If refresh token is successful, update tokens
         if (response.data?.accessToken) {
-          const { accessToken, refreshToken } = response.data;
+          const { authToken, refreshToken } = response.data;
 
           // Update tokens in cookies
-          setTokenCookie(accessToken, refreshToken);
+          setTokenCookie(authToken, refreshToken,email);
 
           // Retry the original request with new token
-          originalRequest.headers.Authorization = accessToken;
+          originalRequest.headers.Authorization = authToken;
           return axios(originalRequest);
         }
       } catch (refreshError) {
