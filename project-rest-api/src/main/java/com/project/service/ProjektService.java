@@ -21,7 +21,7 @@ public interface ProjektService {
 
     Page<Projekt> searchByNazwa(String nazwa, Pageable pageable);
 
-    Optional<Projekt> getProjektByTeacherTeacherId(Long teacherId);
+    Set<Projekt> getProjektByTeacherTeacherId(Long teacherId);
 
     Set<Projekt> getProjektyByStudentId(Long studentId);
 }

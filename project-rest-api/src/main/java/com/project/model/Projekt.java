@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
-@Builder
+@Builder(builderMethodName = "hiddenBuilder") // rename the original builder method
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -73,7 +73,12 @@ public class Projekt {
     public Projekt(String nazwa, String opis, Teacher teacher) {
         this.nazwa = nazwa;
         this.opis = opis;
+        this.teacher = teacher;
         this.joinCode = generateJoinCode();
+    }
+
+    public static ProjektBuilder builder() {
+        return hiddenBuilder().joinCode(generateJoinCode());
     }
 
     public Collection<Student> getStudents() {

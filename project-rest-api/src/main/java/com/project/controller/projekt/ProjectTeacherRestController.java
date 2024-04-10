@@ -1,6 +1,7 @@
 package com.project.controller.projekt;
 
 import com.project.auth.AuthenticationService;
+import com.project.controller.projekt.requests.CreateProjectRequest;
 import com.project.model.Projekt;
 import com.project.model.User;
 import com.project.repository.ProjektRepository;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -36,10 +38,13 @@ public class ProjectTeacherRestController {
 
 
     @PostMapping("/create")
-    ResponseEntity<Void> createProjekt(@Valid @RequestBody Projekt projekt, @AuthenticationPrincipal User currentUser) {// @RequestBody oznacza, że dane
-        // projektu (w formacie JSON) są
-        projekt.setTeacher(currentUser.getTeacher());
-        Projekt createdProjekt = projektService.setProjekt(projekt); // przekazywane w ciele żądania
+    ResponseEntity<Void> createProjekt(@RequestBody CreateProjectRequest request, @AuthenticationPrincipal User currentUser) {// @RequestBody oznacza, że dane
+        var projekt = Projekt.builder() // przesłane w ciele żądania mają być zdeserializowane do obiektu
+                .nazwa(request.getNazwa())
+                .opis(request.getOpis())
+                .teacher(currentUser.getTeacher())
+                .build();
+        Projekt createdProjekt = projektService.setProjekt(projekt); // utworzenie projektu
         URI location = ServletUriComponentsBuilder.fromCurrentRequest() // link wskazujący utworzony projekt
                 .path("/{projektId}").buildAndExpand(createdProjekt.getProjektId()).toUri();
         return ResponseEntity.created(location).build(); // zwracany jest kod odpowiedzi 201 - Created
@@ -84,13 +89,6 @@ public class ProjectTeacherRestController {
             }
             return new ResponseEntity<String>(p.getJoinCode(), HttpStatus.OK);
         }).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/my")
-    public ResponseEntity<Projekt> getMyProjekt(@AuthenticationPrincipal User currentUser) {
-        return projektService.getProjektByTeacherTeacherId(currentUser.getTeacher().getTeacherId())
-                .map(p -> new ResponseEntity<Projekt>(p, HttpStatus.OK))
-                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 }

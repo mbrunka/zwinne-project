@@ -1,6 +1,7 @@
 package com.project.controller.projekt;
 
 import com.project.model.Projekt;
+import com.project.model.Role;
 import com.project.model.Student;
 import com.project.model.User;
 import com.project.service.ProjektService;
@@ -72,10 +73,18 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
         }
     }
 
-    @PreAuthorize("hasRole('STUDENT')")
+    @PreAuthorize("hasAnyRole( 'STUDENT', 'NAUCZYCIEL')")
     @GetMapping("/my")
     public ResponseEntity<Set<Projekt>> getMyProjects(@AuthenticationPrincipal User currentUser) {
-        Set<Projekt> projekts = projektService.getProjektyByStudentId(currentUser.getStudent().getStudentId());
-        return ResponseEntity.ok(projekts);
+        if (currentUser.getRole().equals(Role.STUDENT)) {
+            Set<Projekt> projekts = projektService.getProjektyByStudentId(currentUser.getStudent().getStudentId());
+            return ResponseEntity.ok(projekts);
+        }
+        else if (currentUser.getRole().equals(Role.NAUCZYCIEL)) {
+            Set<Projekt> projects = projektService.getProjektByTeacherTeacherId(currentUser.getTeacher().getTeacherId());
+            return ResponseEntity.ok(projects);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 }

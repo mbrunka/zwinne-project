@@ -64,7 +64,7 @@ public class ProjektServiceImpl implements ProjektService {
     }
 
     @Override
-    public Optional<Projekt> getProjektByTeacherTeacherId(Long teacherId) {
+    public Set<Projekt> getProjektByTeacherTeacherId(Long teacherId) {
         return projektRepository.findByTeacherTeacherId(teacherId);
     }
 

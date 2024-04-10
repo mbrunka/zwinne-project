@@ -18,6 +18,6 @@ public interface ProjektRepository extends JpaRepository<Projekt, Integer> {
 
     Optional<Projekt> findByJoinCode(String joinCode);
 
-    Optional<Projekt> findByTeacherTeacherId(Long teacherId);
+    Set<Projekt> findByTeacherTeacherId(Long teacherId);
 
 }
