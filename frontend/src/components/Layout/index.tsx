@@ -1,7 +1,7 @@
 import { getCurrentRole } from "@/utils/cookies";
 import { Box } from "@chakra-ui/react";
 import React from "react";
-import { Home, Layers, Users } from "react-feather";
+import { Home, Layers, User, Users } from "react-feather";
 import Header from "../Header";
 import NavItem from "../common/NavItem";
 
@@ -35,6 +35,13 @@ const Layout = ({ hideSideBar = false, children }: LayoutProps) => {
             <NavItem
               label="Teachers verification"
               href="/teachers-verification"
+              ico={User}
+            />
+          )}
+          {role == "NAUCZYCIEL" && (
+            <NavItem
+              label="Users"
+              href="/users"
               ico={Users}
             />
           )}

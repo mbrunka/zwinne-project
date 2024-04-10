@@ -159,6 +159,26 @@ public class AuthenticationService {
         return GetCandidatesResponse.builder().users(candidates).build();
     }
 
+    public GetStudentsResponse getStudents() {
+        List<User> students = userRepository.findAllStudents();
+
+        List<GetStudentsResponse.UserWithStudent> usersWithStudents = students.stream()
+                .map(student -> {
+                    GetStudentsResponse.UserWithStudent userWithStudent = new GetStudentsResponse.UserWithStudent();
+                    userWithStudent.setUser(student);
+                    userWithStudent.setStudent(student.getStudent());
+                    return userWithStudent;
+                })
+                .collect(Collectors.toList());
+
+        return GetStudentsResponse.builder().users(usersWithStudents).build();
+    }
+
+    public GetTeachersResponse getTeachers() {
+        var teachers = userRepository.findAllTeachers();
+        return GetTeachersResponse.builder().users(teachers).build();
+    }
+
     public Number verifyCandidate(VerifyCandidateRequest request) {
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();

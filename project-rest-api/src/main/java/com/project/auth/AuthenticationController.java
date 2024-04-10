@@ -71,6 +71,18 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.getCandidates());
     }
 
+    @GetMapping("/getStudents")
+    public ResponseEntity<GetStudentsResponse> getStudents(
+    ) {
+        return ResponseEntity.ok(service.getStudents());
+    }
+
+    @GetMapping("/getTeachers")
+    public ResponseEntity<GetTeachersResponse> getTeachers(
+    ) {
+        return ResponseEntity.ok(service.getTeachers());
+    }
+
     @PutMapping("/verifyCandidate")
     public ResponseEntity<?> verifyCandidate(
             @RequestBody VerifyCandidateRequest request
