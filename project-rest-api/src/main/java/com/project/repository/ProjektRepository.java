@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public interface ProjektRepository extends JpaRepository<Projekt, Integer> {
+public interface ProjektRepository extends JpaRepository<Projekt, Long> {
     Page<Projekt> findByNazwaContainingIgnoreCase(String nazwa, Pageable pageable);
+
+    Optional<Projekt> findByProjektId(Long projektId);
 
     List<Projekt> findByNazwaContainingIgnoreCase(String nazwa);
     // Metoda findByNazwaContainingIgnoreCase definiuje zapytanie

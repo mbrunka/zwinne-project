@@ -6,16 +6,17 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 public interface ProjektService {
 
-    Optional<Projekt> getProjekt(Integer projektId);
+    Optional<Projekt> getProjekt(Long projektId);
 
     Optional<Projekt> getProjekt(String joinCode);
 
     Projekt setProjekt(Projekt projekt);
 
-    void deleteProjekt(Integer projektId);
+    void deleteProjekt(Long projektId);
 
     Page<Projekt> getProjekty(Pageable pageable);
 

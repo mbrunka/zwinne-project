@@ -72,7 +72,7 @@ public class ProjectTeacherRestController {
     }
 
     @DeleteMapping("/{projektId}")
-    public ResponseEntity<Void> deleteProjekt(@PathVariable Integer projektId,
+    public ResponseEntity<Void> deleteProjekt(@PathVariable Long projektId,
                                               @AuthenticationPrincipal User currentUser) {
         return projektService.getProjekt(projektId).map(p -> {
             if (!p.getTeacher().getTeacherId().equals(currentUser.getTeacher().getTeacherId())) {
@@ -84,7 +84,7 @@ public class ProjectTeacherRestController {
     }
 
     @GetMapping("/{projektId}/code")
-    public ResponseEntity<String> getJoinCode(@PathVariable Integer projektId,
+    public ResponseEntity<String> getJoinCode(@PathVariable Long projektId,
                                               @AuthenticationPrincipal User currentUser) {
         return projektService.getProjekt(projektId).map(p -> {
             if (!p.getTeacher().getTeacherId().equals(currentUser.getTeacher().getTeacherId())) {

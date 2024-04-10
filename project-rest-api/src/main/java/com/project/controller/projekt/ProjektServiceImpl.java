@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class ProjektServiceImpl implements ProjektService {
@@ -29,8 +30,8 @@ public class ProjektServiceImpl implements ProjektService {
     }
 
     @Override
-    public Optional<Projekt> getProjekt(Integer projektId) {
-        return projektRepository.findById(projektId);
+    public Optional<Projekt> getProjekt(Long projektId) {
+        return projektRepository.findByProjektId(projektId);
     }
 
     @Override
@@ -48,7 +49,7 @@ public class ProjektServiceImpl implements ProjektService {
 
     @Override
     @Transactional
-    public void deleteProjekt(Integer projektId) {
+    public void deleteProjekt(Long projektId) {
         zadanieRepository.deleteAll(zadanieRepository.findZadaniaProjektu(projektId));
         projektRepository.deleteById(projektId);
     }

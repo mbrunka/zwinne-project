@@ -1,5 +1,7 @@
 package com.project.controller.projekt;
 
+import com.project.controller.projekt.requests.JoinCodeRequest;
+import com.project.controller.projekt.requests.projektIdRequest;
 import com.project.model.Projekt;
 import com.project.model.Role;
 import com.project.model.Student;
@@ -36,7 +38,7 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
     // RODZAJ METODY HTTP, A TAKŻE ADRES I PARAMETRY ŻĄDANIA
     //Przykład żądania wywołującego metodę: GET http://localhost:8080/api/projekty/1
     @GetMapping("/{projektId}")
-    ResponseEntity<Projekt> getProjekt(@PathVariable Integer projektId) {// @PathVariable oznacza, że wartość
+    ResponseEntity<Projekt> getProjekt(@PathVariable Long projektId) {// @PathVariable oznacza, że wartość
         return ResponseEntity.of(projektService.getProjekt(projektId)); // parametru przekazywana jest w ścieżce
     }
 
@@ -53,19 +55,18 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
         return projektService.searchByNazwa(nazwa, pageable);
     }
 
-
-    @GetMapping(value = "/join", params = "joinCode")
-    public void joinProject(@RequestParam String joinCode, @AuthenticationPrincipal User currentUser) {
-        Optional<Projekt> project = projektService.getProjekt(joinCode);
+    @PostMapping(value = "/join")
+    public void joinProject(@RequestBody JoinCodeRequest request, @AuthenticationPrincipal User currentUser) {
+        Optional<Projekt> project = projektService.getProjekt(request.getJoinCode());
         if (project.isPresent()) {
             project.get().getStudents().add(currentUser.getStudent());
             projektService.setProjekt(project.get());
         }
     }
 
-    @GetMapping(value = "/leave", params = "projektId")
-    public void leaveProject(Integer projektId, @AuthenticationPrincipal User currentUser) {
-        Optional<Projekt> project = projektService.getProjekt(projektId);
+    @PostMapping(value = "/leave")
+    public void leaveProject(@RequestBody projektIdRequest request, @AuthenticationPrincipal User currentUser) {
+        Optional<Projekt> project = projektService.getProjekt(request.getProjektId());
         if (project.isPresent()) {
             Student student = userService.getUser(currentUser.getEmail()).get().getStudent();
             project.get().getStudents().remove(student);
