@@ -1,5 +1,5 @@
 import CustomAlertDialog from "@/components/common/AlertDialog";
-import Table from "@/components/common/Table";
+import JoinProjectFrom from "@/components/Projects/JoinProjectForm";
 import ProjectFormModal from "@/components/Projects/ProjectFormModal";
 import { useToastPromise } from "@/hooks/useToast";
 import { getCurrentRole } from "@/utils/cookies";
@@ -15,6 +15,7 @@ import axios from "axios";
 import { useCallback, useMemo, useState } from "react";
 import useSWR from "swr";
 import Layout from "../components/Layout";
+import Table from "@/components/common/Table";
 
 const ProjectsPage = () => {
   const { data, mutate, isValidating } = useSWR("/projekty/my");
@@ -22,6 +23,7 @@ const ProjectsPage = () => {
   const [selectedProject, setSelectedProject] = useState<any | undefined>();
   const toast = useToastPromise();
   const modal = useDisclosure();
+  const leaveModal = useDisclosure();
   const projectModal = useDisclosure();
   const role = getCurrentRole();
 
@@ -39,6 +41,20 @@ const ProjectsPage = () => {
     );
   };
 
+  const leaveProject = async (id: number) => {
+    return toast.promise(
+      axios
+        .post(`/projekty/leave`, { projektId: id })
+        .then(async () => {
+          await mutate();
+          leaveModal.onClose();
+        })
+        .catch(() => {
+          leaveModal.onClose();
+        })
+    );
+  };
+
   const openAlertModal = useCallback(
     (id: number) => {
       setSelectedId(id);
@@ -47,50 +63,89 @@ const ProjectsPage = () => {
     [modal]
   );
 
-  const columns = useMemo(
-    () => [
-      { Header: "ID", accessor: "projektId" },
-      { Header: "Name", accessor: "nazwa" },
-      { Header: "Description", accessor: "opis" },
-      role == "NAUCZYCIEL" && {
-        Header: "Join code",
-        accessor: "joinCode",
-      },
-      role == "NAUCZYCIEL" && {
-        Header: "Edition",
-        Cell: ({ row }: { row: any }) => {
-          return (
-            <Flex
-              width="100%"
-              direction="column"
-              fontSize="18px"
-              lineHeight={1}
-              gap={4}
-            >
-              <Button
-                size="sm"
-                onClick={async () => {
-                  await openAlertModal(row?.original?.projektId);
-                }}
-              >
-                Delete
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => {
-                  setSelectedProject(row?.original);
-                  projectModal.onOpen();
-                }}
-              >
-                Edit
-              </Button>
-            </Flex>
-          );
-        },
-      },
-    ],
-    [openAlertModal, projectModal, role]
+  const openLeaveAlertModal = useCallback(
+    (id: number) => {
+      setSelectedId(id);
+      leaveModal.onOpen();
+    },
+    [leaveModal]
   );
+
+  const columns = useMemo(() => {
+    if (role == "NAUCZYCIEL") {
+      return [
+        { Header: "ID", accessor: "projektId" },
+        { Header: "Name", accessor: "nazwa" },
+        { Header: "Description", accessor: "opis" },
+        {
+          Header: "Join code",
+          accessor: "joinCode",
+        },
+        {
+          Header: "Edition",
+          accessor: "projektId",
+          Cell: ({ row }: { row: any }) => {
+            return (
+              <Flex
+                width="100%"
+                direction="column"
+                fontSize="18px"
+                lineHeight={1}
+                gap={4}
+              >
+                <Button
+                  size="sm"
+                  onClick={async () => {
+                    await openAlertModal(row?.original?.projektId);
+                  }}
+                >
+                  Delete
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    setSelectedProject(row?.original);
+                    projectModal.onOpen();
+                  }}
+                >
+                  Edit
+                </Button>
+              </Flex>
+            );
+          },
+        },
+      ];
+    } else {
+      return [
+        { Header: "Name", accessor: "nazwa" },
+        { Header: "Description", accessor: "opis" },
+        { Header: "Teacher", accessor: "teacher.user.fullName" },
+        {
+          Header: "Edition",
+          Cell: ({ row }: { row: any }) => {
+            return (
+              <Flex
+                width="100%"
+                direction="column"
+                fontSize="18px"
+                lineHeight={1}
+                gap={4}
+              >
+                <Button
+                  size="sm"
+                  onClick={async () => {
+                    await openLeaveAlertModal(row?.original?.projektId);
+                  }}
+                >
+                  Leave
+                </Button>
+              </Flex>
+            );
+          },
+        },
+      ];
+    }
+  }, [openAlertModal, openLeaveAlertModal, projectModal, role]);
 
   return (
     <Layout>
@@ -106,13 +161,13 @@ const ProjectsPage = () => {
           Add
         </Button>
       )}
-      {role == "STUDENT" && <></>}
+      {role == "STUDENT" && <JoinProjectFrom />}
       {isValidating && !data && <Spinner />}
       {data?.length == 0 && <Text>No projects</Text>}
-      {data?.length > 0 && (
+      {data?.length > 0 && role && (
         <Table
           columns={columns}
-          data={data}
+          data={data || data?.[0]}
           searchBar={false}
           pagination={false}
         />
@@ -124,6 +179,15 @@ const ProjectsPage = () => {
         headerText="Delete project"
         onConfirm={async () => {
           await deleteProject(selectedId ?? 0);
+        }}
+      />
+      <CustomAlertDialog
+        isOpen={leaveModal.isOpen}
+        onClose={leaveModal.onClose}
+        bodyText="Are you sure You want to leave this project?"
+        headerText="Leave project"
+        onConfirm={async () => {
+          await leaveProject(selectedId ?? 0);
         }}
       />
       <ProjectFormModal

@@ -56,7 +56,7 @@ public class ProjectTeacherRestController {
     // w modelu np. NotNull, Size, NotEmpty itd. (z jakarta.validation.constraints.*)
     @PatchMapping("/{projektId}")
     public ResponseEntity<Void> updateProjekt(@RequestBody CreateProjectRequest request,
-                                              @PathVariable Integer projektId,
+                                              @PathVariable Long projektId,
                                               @AuthenticationPrincipal User currentUser) {
         Optional<Projekt> projekt = projektService.getProjekt(projektId);
         if (projekt.isEmpty()) {

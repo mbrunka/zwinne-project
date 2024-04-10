@@ -4,6 +4,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   Input,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -26,7 +27,7 @@ const JoinProjectFrom = (): React.ReactElement => {
 
   const onSubmit = async (data: Inputs) => {
     return toast.promise(
-      axios.post(`/projekty/teacher/create`, data).then(async () => {
+      axios.post(`/projekty/join`, { joinCode: data?.code }).then(async () => {
         await mutate("/projekty/my");
         reset();
       })
@@ -35,8 +36,9 @@ const JoinProjectFrom = (): React.ReactElement => {
 
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)}>
+      <Heading size="small">Join project</Heading>
       <FormControl isRequired isInvalid={!!errors?.code}>
-        <FormLabel>Join code</FormLabel>
+        <FormLabel>Code</FormLabel>
         <Input
           autoFocus
           {...register("code", {
@@ -45,7 +47,12 @@ const JoinProjectFrom = (): React.ReactElement => {
         />
         {!!errors?.code && <FormErrorMessage>Field required</FormErrorMessage>}
       </FormControl>
-      <Button isLoading={isSubmitting} isDisabled={isSubmitting} type="submit">
+      <Button
+        marginY={5}
+        isLoading={isSubmitting}
+        isDisabled={isSubmitting}
+        type="submit"
+      >
         Join
       </Button>
     </form>

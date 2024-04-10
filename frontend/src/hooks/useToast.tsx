@@ -24,6 +24,7 @@ export const useToastPromise = (options?: UseToastOptions) => {
 
     const errorKeys = {
       ...params.errorKeys,
+      projectDoesNotExist: "Project with gived code does not exist.",
       LoggedOut: "The user has been logged out. Try logging in again.",
       ServerError:
         "There is a problem on the server side. Please try again later.",
@@ -41,7 +42,7 @@ export const useToastPromise = (options?: UseToastOptions) => {
       .catch((result) => {
         toast.update(toastId, {
           status: "error",
-          description: errorKeys[result?.response?.data] || error,
+          description: errorKeys?.[result?.response?.data] || error,
           duration: 5000,
         });
         return result;

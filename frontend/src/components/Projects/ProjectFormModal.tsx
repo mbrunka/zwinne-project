@@ -44,7 +44,8 @@ const ProjectFormModal = ({
   const toast = useToastPromise();
 
   useEffect(() => {
-    if (project) reset({ nazwa: project?.nazwa, opis: project?.opis });
+    if (!!project) reset({ nazwa: project?.nazwa, opis: project?.opis });
+    if (!project) reset({ nazwa: "", opis: "" });
   }, [project, reset]);
 
   const onSubmit = async (data: Inputs) => {
@@ -52,7 +53,7 @@ const ProjectFormModal = ({
       !project
         ? axios.post(`/projekty/teacher/create`, data).then(async () => {
             await mutate("/projekty/my");
-            reset();
+            reset({ nazwa: "", opis: "" });
             onClose();
           })
         : axios
@@ -95,7 +96,7 @@ const ProjectFormModal = ({
                   <FormErrorMessage>Field required</FormErrorMessage>
                 )}
               </FormControl>
-              <FormControl isRequired isInvalid={!!errors?.opis}>
+              <FormControl isRequired isInvalid={!!errors?.opis} mt={5}>
                 <FormLabel>Description</FormLabel>
                 <Textarea
                   {...register("opis", {
