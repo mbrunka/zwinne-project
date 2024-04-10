@@ -56,11 +56,15 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
     }
 
     @PostMapping(value = "/join")
-    public void joinProject(@RequestBody JoinCodeRequest request, @AuthenticationPrincipal User currentUser) {
+    public ResponseEntity<Object> joinProject(@RequestBody JoinCodeRequest request, @AuthenticationPrincipal User currentUser) {
         Optional<Projekt> project = projektService.getProjekt(request.getJoinCode());
         if (project.isPresent()) {
             project.get().getStudents().add(currentUser.getStudent());
             projektService.setProjekt(project.get());
+            return ResponseEntity.ok().build();
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("projectDoesNotExist");
         }
     }
 

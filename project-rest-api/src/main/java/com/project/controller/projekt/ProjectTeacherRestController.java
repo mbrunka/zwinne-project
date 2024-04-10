@@ -55,18 +55,20 @@ public class ProjectTeacherRestController {
     // @Valid włącza automatyczną walidację na podstawie adnotacji zawartych
     // w modelu np. NotNull, Size, NotEmpty itd. (z jakarta.validation.constraints.*)
     @PatchMapping("/{projektId}")
-    public ResponseEntity<Void> updateProjekt(@Valid @RequestBody Projekt projekt,
-                                              @PathVariable Integer projektId,
+    public ResponseEntity<Void> updateProjekt(@RequestBody CreateProjectRequest request,
+                                              @PathVariable Long projektId,
                                               @AuthenticationPrincipal User currentUser) {
-        return projektService.getProjekt(projektId)
-                .map(p -> {
-                    if (!p.getTeacher().getTeacherId().equals(currentUser.getTeacher().getTeacherId())) {
-                        return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
-                    }
-                    projektService.setProjekt(projekt);
-                    return new ResponseEntity<Void>(HttpStatus.OK);
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<Projekt> projekt = projektService.getProjekt(projektId);
+        if (projekt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        if (!projekt.get().getTeacher().getTeacherId().equals(currentUser.getTeacher().getTeacherId())) {
+            return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+        }
+        projekt.get().setNazwa(request.getNazwa());
+        projekt.get().setOpis(request.getOpis());
+        projektRepository.save(projekt.get());
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{projektId}")
