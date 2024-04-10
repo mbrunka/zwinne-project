@@ -28,7 +28,7 @@ public class Projekt {
     @Id
     @Column(name = "projekt_id") //tylko jeżeli nazwa kolumny w bazie danych ma być inna od nazwy zmiennej
     @GeneratedValue
-    private long projektId;
+    private Long projektId;
 
     @OneToMany(mappedBy = "projekt")
     @JsonIgnoreProperties({"projekt"})
