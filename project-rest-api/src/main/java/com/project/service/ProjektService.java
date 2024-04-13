@@ -1,6 +1,7 @@
 package com.project.service;
 
 import com.project.model.Projekt;
+import com.project.model.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -25,4 +26,8 @@ public interface ProjektService {
     Set<Projekt> getProjektByTeacherTeacherId(Long teacherId);
 
     Set<Projekt> getProjektyByStudentId(Long studentId);
+
+    //Status addStatusToProjekt(Long projektId, Long statusId);
+
+
 }

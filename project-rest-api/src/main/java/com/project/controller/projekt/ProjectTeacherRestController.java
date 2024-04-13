@@ -2,10 +2,16 @@ package com.project.controller.projekt;
 
 import com.project.auth.AuthenticationService;
 import com.project.controller.projekt.requests.CreateProjectRequest;
+import com.project.controller.projekt.requests.CreateStatusRequest;
+import com.project.controller.projekt.requests.UpdateStatusRequest;
 import com.project.model.Projekt;
+import com.project.model.Status;
 import com.project.model.User;
 import com.project.repository.ProjektRepository;
 import com.project.service.ProjektService;
+import com.project.service.StatusService;
+import com.project.service.ZadanieService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -25,35 +32,57 @@ import java.util.UUID;
 @PreAuthorize("hasAnyRole('NAUCZYCIEL', 'ADMIN')")
 @RequestMapping("/api/v1/projekty/teacher")
 public class ProjectTeacherRestController {
-    private final ProjektService projektService;
-    private final ProjektRepository projektRepository;
-
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
     @Autowired
-    public ProjectTeacherRestController(ProjektService projektService, ProjektRepository projektRepository) {
-        this.projektService = projektService;
-        this.projektRepository = projektRepository;
-    }
+    private ProjektService projektService;
 
+    @Autowired
+    private StatusService statusService;
+
+    @Autowired
+    private ProjektRepository projektRepository;
 
 
     @PostMapping("/create")
-    ResponseEntity<Void> createProjekt(@RequestBody CreateProjectRequest request, @AuthenticationPrincipal User currentUser) {// @RequestBody oznacza, że dane
-        var projekt = Projekt.builder() // przesłane w ciele żądania mają być zdeserializowane do obiektu
+    @Transactional
+    ResponseEntity<Void> createProjekt(@RequestBody CreateProjectRequest request, @AuthenticationPrincipal User currentUser) {
+        var projekt = Projekt.builder()
                 .nazwa(request.getNazwa())
                 .opis(request.getOpis())
                 .teacher(currentUser.getTeacher())
                 .build();
-        Projekt createdProjekt = projektService.setProjekt(projekt); // utworzenie projektu
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest() // link wskazujący utworzony projekt
+
+        // Save the updated Projekt object to the database
+        Projekt createdProjekt = projektService.setProjekt(projekt);
+
+        // Add default statusy
+        Status status1 = Status.builder()
+                .nazwa("Do zrobienia")
+                .kolor("#FF0000")
+                .waga(0)
+                .projekt(createdProjekt)
+                .build();
+        Status status2 = Status.builder()
+                .nazwa("W trakcie")
+                .kolor("#FFFF00")
+                .waga(50)
+                .projekt(createdProjekt)
+                .build();
+        Status status3 = Status.builder()
+                .nazwa("Zrobione")
+                .kolor("#00FF00")
+                .waga(100)
+                .projekt(createdProjekt)
+                .build();
+        statusService.setStatus(status1);
+        statusService.setStatus(status2);
+        statusService.setStatus(status3);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{projektId}").buildAndExpand(createdProjekt.getProjektId()).toUri();
-        return ResponseEntity.created(location).build(); // zwracany jest kod odpowiedzi 201 - Created
-    } // z linkiem location w nagłówku
+        return ResponseEntity.created(location).build();
+    }
 
-
-    // @Valid włącza automatyczną walidację na podstawie adnotacji zawartych
-    // w modelu np. NotNull, Size, NotEmpty itd. (z jakarta.validation.constraints.*)
     @PatchMapping("/{projektId}")
     public ResponseEntity<Void> updateProjekt(@RequestBody CreateProjectRequest request,
                                               @PathVariable Long projektId,
@@ -92,6 +121,56 @@ public class ProjectTeacherRestController {
             }
             return new ResponseEntity<String>(p.getJoinCode(), HttpStatus.OK);
         }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/status")
+    public ResponseEntity<Status> createStatus(@RequestBody CreateStatusRequest request,
+                                               @AuthenticationPrincipal User currentUser) {
+        Optional<Projekt> projekt = projektService.getProjekt(request.getProjektId());
+        if (projekt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Status status = Status.builder()
+                .nazwa(request.getNazwa())
+                .kolor(request.getKolor())
+                .waga(request.getWaga())
+                .projekt(projekt.get())
+                .build();
+        Status createdStatus = statusService.setStatus(status);
+        return ResponseEntity.ok(createdStatus);
+    }
+
+    @PatchMapping("/status")
+    public ResponseEntity<?> updateStatus(@RequestBody UpdateStatusRequest request,
+                                            @AuthenticationPrincipal User currentUser) {
+        Optional<Status> status = statusService.getStatus(request.getStatusId());
+        if (status.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        if (!status.get().getProjekt().getTeacher().getTeacherId().equals(currentUser.getTeacher().getTeacherId())) {
+            return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+        }
+        status.get().setNazwa(request.getNazwa());
+        status.get().setKolor(request.getKolor());
+        status.get().setWaga(request.getWaga());
+        return ResponseEntity.ok(statusService.setStatus(status.get()));
+    }
+
+    @DeleteMapping("/status/{statusId}")
+    public ResponseEntity<Void> deleteStatus(@PathVariable Long statusId,
+                                            @AuthenticationPrincipal User currentUser) {
+        Optional<Status> status = statusService.getStatus(statusId);
+        if (status.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        if (!status.get().getProjekt().getTeacher().getTeacherId().equals(currentUser.getTeacher().getTeacherId())) {
+            return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+        }
+        if (!status.get().getZadania().isEmpty()) {
+            return new ResponseEntity<Void>(HttpStatus.CONFLICT);
+        }
+        statusService.deleteStatus(statusId);
+        return ResponseEntity.ok().build();
     }
 
 }

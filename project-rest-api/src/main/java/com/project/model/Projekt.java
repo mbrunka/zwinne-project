@@ -4,6 +4,7 @@ package com.project.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,6 +55,10 @@ public class Projekt {
     @Column(length = 1000)
     private String opis;
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "projekt")
+    private Set<Status> statusy;
+
     // ...
     @CreationTimestamp
     @Column(name = "dataczas_utworzenia", updatable = false)
@@ -66,15 +71,12 @@ public class Projekt {
     @Column
     private LocalDateTime data_oddania;
 
-    public static String generateJoinCode() {
-        return UUID.randomUUID().toString();
-    }
-
     public Projekt(String nazwa, String opis, Teacher teacher) {
         this.nazwa = nazwa;
         this.opis = opis;
         this.teacher = teacher;
         this.joinCode = generateJoinCode();
+        this.statusy = generateStatusy(this);
     }
 
     public static ProjektBuilder builder() {
@@ -95,9 +97,31 @@ public class Projekt {
                 ", joinCode='" + joinCode + '\'' +
                 ", nazwa='" + nazwa + '\'' +
                 ", opis='" + opis + '\'' +
+                ", statusy=" + statusy +
                 ", dataCzasUtworzenia=" + dataCzasUtworzenia +
                 ", dataCzasModyfikacji=" + dataCzasModyfikacji +
                 ", data_oddania=" + data_oddania +
                 '}';
+    }
+
+    public static String generateJoinCode() {
+        return UUID.randomUUID().toString();
+    }
+
+    public static Set<Status> generateStatusy(Projekt projekt) {
+        Status todoStatus = new Status("TODO", "color", 0, projekt);
+        Status inProgressStatus = new Status("Inprogress", "color", 50, projekt);
+        Status doneStatus = new Status("Done", "color", 100, projekt);
+
+        return Set.of(todoStatus, inProgressStatus, doneStatus);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((projektId == null) ? 0 : projektId.hashCode());
+        // other fields that define equality
+        return result;
     }
 }

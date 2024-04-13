@@ -1,7 +1,9 @@
 package com.project.controller.projekt;
 
 import com.project.model.Projekt;
+import com.project.model.Status;
 import com.project.model.Student;
+import com.project.model.Zadanie;
 import com.project.repository.ProjektRepository;
 import com.project.repository.StudentRepository;
 import com.project.repository.ZadanieRepository;
@@ -74,5 +76,6 @@ public class ProjektServiceImpl implements ProjektService {
         Optional<Student> student = studentRepository.findByStudentId(studentId);
         return student.map(Student::getProjekty).orElseThrow(() -> new RuntimeException("Student not found"));
     }
+
 
 }

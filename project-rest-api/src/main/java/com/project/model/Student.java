@@ -38,6 +38,13 @@ public class Student {
             inverseJoinColumns = {@JoinColumn(name = "projekt_id")})
     private Set<Projekt> projekty;
 
+    @JsonBackReference
+    @ManyToMany
+    @JoinTable(name = "zadania_student",
+            joinColumns = {@JoinColumn(name = "student_id")},
+            inverseJoinColumns = {@JoinColumn(name = "zadania_id")})
+    private Set<Projekt> zadania;
+
     @Override
     public int hashCode() {
         final int prime = 31;

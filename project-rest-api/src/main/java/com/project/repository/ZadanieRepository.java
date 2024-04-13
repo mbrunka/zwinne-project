@@ -8,12 +8,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ZadanieRepository extends JpaRepository<Zadanie, Long> {
     //dwukropkiem oznacza się parametry zapytania
+
     @Query("SELECT z FROM Zadanie z WHERE z.projekt.projektId = :projektId")
     Page<Zadanie> findZadaniaProjektu(@Param("projektId") Long projektId, Pageable pageable);
 
     @Query("SELECT z FROM Zadanie z WHERE z.projekt.projektId = :projektId")
     List<Zadanie> findZadaniaProjektu(@Param("projektId") Long projektId);
+
 }

@@ -24,7 +24,7 @@ public class Teacher {
     @MapsId
     private User user;
 
-    @OneToMany(mappedBy = "teacher")
+    @OneToMany(fetch = FetchType.EAGER)
     private Set<Projekt> projekty;
 
     @Override
@@ -33,6 +33,14 @@ public class Teacher {
                 "teacherId=" + teacherId +
                 ", user=" + user +
                 '}';
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((teacherId == null) ? 0 : teacherId.hashCode());
+        return result;
     }
 
 }

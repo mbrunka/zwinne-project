@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -39,6 +40,15 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Page<Student> searchByNrIndeksu(String nrIndeksu, Pageable pageable) {
         return studentRepository.findByNrIndeksuStartsWith(nrIndeksu, pageable);
+    }
+
+    @Override
+    public Set<Student> getStudentsByIds(Set<Long> studentIds) {
+        Set<Student> students = Set.of();
+        for (Long studentId : studentIds) {
+            students.add(studentRepository.findByStudentId(studentId).get());
+        }
+        return students;
     }
 
 }

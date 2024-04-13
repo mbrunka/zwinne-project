@@ -92,4 +92,5 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
+
 }

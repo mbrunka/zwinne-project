@@ -1,5 +1,6 @@
 package com.project.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -20,7 +23,7 @@ public class Zadanie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "zadanie_id")
-    private Integer zadanieId;
+    private Long zadanieId;
 
     @ManyToOne
     @JoinColumn(name = "projekt_id")
@@ -30,10 +33,21 @@ public class Zadanie {
     private String nazwa;
 
     @Column
-    private Integer kolejnosc;
+    private Integer piorytet;
 
     @Column(length = 1000)
     private String opis;
+
+    @JsonBackReference
+    @ManyToMany
+    @JoinTable(name = "projekt_student",
+            joinColumns = {@JoinColumn(name = "zadanie_id")},
+            inverseJoinColumns = {@JoinColumn(name = "student_id")})
+    private Set<Student> studenci;
+
+    @ManyToOne
+    @JoinColumn(name = "status_id")
+    private Status status;
 
     @CreationTimestamp
     @Column(name = "dataczas_utworzenia", nullable = false, updatable = false)
@@ -42,4 +56,5 @@ public class Zadanie {
     @UpdateTimestamp
     @Column(name = "dataczas_modyfikacji", nullable = false)
     private LocalDateTime dataCzasModyfikacji;
+
 }
