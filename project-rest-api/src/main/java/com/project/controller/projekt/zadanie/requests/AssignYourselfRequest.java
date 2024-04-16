@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class assignYourselfRequest {
+public class AssignYourselfRequest {
     private Long zadanieId;
 }

@@ -1,6 +1,5 @@
 package com.project.controller.projekt.zadanie.requests;
 
-import com.project.model.Student;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +11,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class setZadanieRequest {
+public class SetZadanieRequest {
     private String nazwa;
     private String opis;
     private int piorytet;
