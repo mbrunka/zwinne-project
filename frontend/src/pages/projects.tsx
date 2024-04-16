@@ -83,7 +83,6 @@ const ProjectsPage = () => {
         },
         {
           Header: "Edition",
-          accessor: "projektId",
           Cell: ({ row }: { row: any }) => {
             return (
               <Flex
