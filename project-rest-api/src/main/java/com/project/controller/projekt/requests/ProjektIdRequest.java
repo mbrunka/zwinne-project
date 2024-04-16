@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class projektIdRequest {
+public class ProjektIdRequest {
     long projektId;
 }

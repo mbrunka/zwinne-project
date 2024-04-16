@@ -1,5 +1,6 @@
 package com.project.controller.projekt;
 
+import com.project.controller.projekt.zadanie.util.StatusDto;
 import com.project.model.Projekt;
 import com.project.model.Status;
 import com.project.model.Student;
@@ -77,5 +78,14 @@ public class ProjektServiceImpl implements ProjektService {
         return student.map(Student::getProjekty).orElseThrow(() -> new RuntimeException("Student not found"));
     }
 
+    public StatusDto convertToDto(Status status) {
+        StatusDto dto = new StatusDto();
+        dto.setStatusId(status.getStatusId());
+        dto.setNazwa(status.getNazwa());
+        dto.setKolor(status.getKolor());
+        dto.setWaga(status.getWaga());
+        dto.setZadania(status.getZadania());
+        return dto;
+    }
 
 }

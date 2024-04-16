@@ -46,6 +46,7 @@ public class Zadanie {
     private Set<Student> studenci;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "status_id")
     private Status status;
 

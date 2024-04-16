@@ -1,5 +1,6 @@
 package com.project.service;
 
+import com.project.controller.projekt.zadanie.util.StatusDto;
 import com.project.model.Projekt;
 import com.project.model.Status;
 import org.springframework.data.domain.Page;
@@ -29,5 +30,5 @@ public interface ProjektService {
 
     //Status addStatusToProjekt(Long projektId, Long statusId);
 
-
+    public StatusDto convertToDto(Status status);
 }

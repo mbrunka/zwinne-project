@@ -1,11 +1,9 @@
 package com.project.controller.projekt;
 
 import com.project.controller.projekt.requests.JoinCodeRequest;
-import com.project.controller.projekt.requests.projektIdRequest;
-import com.project.model.Projekt;
-import com.project.model.Role;
-import com.project.model.Student;
-import com.project.model.User;
+import com.project.controller.projekt.requests.ProjektIdRequest;
+import com.project.controller.projekt.zadanie.util.StatusDto;
+import com.project.model.*;
 import com.project.service.ProjektService;
 import com.project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @RestController // przez kontener Springa REST-owy kontroler obsługujący sieciowe żądania
@@ -69,13 +68,30 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
     }
 
     @PostMapping(value = "/leave")
-    public void leaveProject(@RequestBody projektIdRequest request, @AuthenticationPrincipal User currentUser) {
+    public void leaveProject(@RequestBody ProjektIdRequest request, @AuthenticationPrincipal User currentUser) {
         Optional<Projekt> project = projektService.getProjekt(request.getProjektId());
         if (project.isPresent()) {
             Student student = userService.getUser(currentUser.getEmail()).get().getStudent();
             project.get().getStudents().remove(student);
             projektService.setProjekt(project.get());
         }
+    }
+
+    @GetMapping("/{projektId}/statuses")
+    public ResponseEntity<Set<Status>> getStatusy(@PathVariable Long projektId) {
+        Projekt projekt = projektService.getProjekt(projektId).orElseThrow();
+        Set<Status> statusy = projekt.getStatusy();
+        return ResponseEntity.ok(statusy);
+    }
+
+    @GetMapping("/{projektId}/kanban")
+    public ResponseEntity<Set<StatusDto>> getKanban(@PathVariable Long projektId) {
+        Projekt projekt = projektService.getProjekt(projektId).orElseThrow();
+        Set<Status> statusy = projekt.getStatusy();
+        Set<StatusDto> statusDtos = statusy.stream()
+                .map(status -> projektService.convertToDto(status))
+                .collect(Collectors.toSet());
+        return ResponseEntity.ok(statusDtos);
     }
 
     @PreAuthorize("hasAnyRole( 'STUDENT', 'NAUCZYCIEL')")
