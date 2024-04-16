@@ -1,5 +1,6 @@
 package com.project.controller.projekt.zadanie.util;
 
+import com.project.model.Student;
 import com.project.model.Zadanie;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,5 +20,5 @@ public class StatusDto {
     private String kolor;
     private Integer waga;
     private Set<Zadanie> zadania;
-
+    private Student student;
 }
