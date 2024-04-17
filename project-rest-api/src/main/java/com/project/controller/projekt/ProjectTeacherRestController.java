@@ -59,19 +59,19 @@ public class ProjectTeacherRestController {
         Status status1 = Status.builder()
                 .nazwa("Do zrobienia")
                 .kolor("#FF0000")
-                .waga(0)
+                .waga(50)
                 .projekt(createdProjekt)
                 .build();
         Status status2 = Status.builder()
                 .nazwa("W trakcie")
                 .kolor("#FFFF00")
-                .waga(50)
+                .waga(100)
                 .projekt(createdProjekt)
                 .build();
         Status status3 = Status.builder()
                 .nazwa("Zrobione")
                 .kolor("#00FF00")
-                .waga(100)
+                .waga(150)
                 .projekt(createdProjekt)
                 .build();
         statusService.setStatus(status1);
@@ -156,6 +156,8 @@ public class ProjectTeacherRestController {
         return ResponseEntity.ok(statusService.setStatus(status.get()));
     }
 
+    
+    //TODO nic nie robi
     @DeleteMapping("/status/{statusId}")
     public ResponseEntity<Void> deleteStatus(@PathVariable Long statusId,
                                             @AuthenticationPrincipal User currentUser) {

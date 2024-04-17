@@ -1,40 +1,15 @@
 import { useToastPromise } from "@/hooks/useToast";
+import { getCurrentRole } from "@/utils/cookies";
 import Board from "@asseinfo/react-kanban";
 import "@asseinfo/react-kanban/dist/styles.css";
-import { Button, Flex, useDisclosure } from "@chakra-ui/react";
+import { Button, Flex, Text, useDisclosure } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Edit, Trash } from "react-feather";
 import useSWR from "swr";
 import CustomAlertDialog from "../common/AlertDialog";
+import StatusFormModal from "./StatusFormModal";
 import TaskFormModal from "./TaskFormModal";
-
-const board = {
-  columns: [
-    {
-      id: 1,
-      title: "Backlog",
-      cards: [
-        {
-          id: 1,
-          title: "Add card",
-          description: "Add capability to add a card in a column",
-        },
-      ],
-    },
-    {
-      id: 2,
-      title: "Doing",
-      cards: [
-        {
-          id: 2,
-          title: "Drag-n-drop support",
-          description: "Move a card between the columns",
-        },
-      ],
-    },
-  ],
-};
 
 const Kanban = ({ projectId }: { projectId?: number }) => {
   const {
@@ -45,8 +20,12 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
   const toast = useToastPromise();
   const [controlledBoard, setBoard] = useState();
   const [selectedTask, setSelectedTask] = useState();
+  const [selectedStatus, setSelectedStatus] = useState();
   const deleteTaskModal = useDisclosure();
   const taskFormModal = useDisclosure();
+  const statusFormModal = useDisclosure();
+  const deleteStatusModal = useDisclosure();
+  const role = getCurrentRole();
 
   const deleteTask = async () => {
     return toast.promise(
@@ -64,6 +43,22 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
     );
   };
 
+  const deleteStatus = async () => {
+    return toast.promise(
+      axios
+        .delete(`/projekty/status/${selectedStatus?.statusId}`)
+        .then(async () => {
+          await mutateKanban();
+          deleteStatusModal.onClose();
+          setSelectedStatus(null);
+        })
+        .catch(() => {
+          deleteStatusModal.onClose();
+          setSelectedStatus(null);
+        })
+    );
+  };
+
   useEffect(() => {
     setBoard({
       columns: kanbanData
@@ -71,7 +66,8 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
         ?.map((column) => ({
           id: column.statusId,
           title: column.nazwa,
-          backgroundColor: column.kolor,
+          kolor: column.kolor,
+          waga: column?.waga,
           cards: column?.zadania?.map((zadanie) => ({
             id: zadanie.zadanieId,
             title: zadanie.nazwa,
@@ -119,10 +115,43 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
         })
     );
   }
+
+  function handleColumnMove(board, column, source, destination) {
+    const sortedData = kanbanData?.sort((a, b) => a?.waga - b?.waga);
+    const newWaga =
+      source?.toPosition > 0 ?
+      source?.toPosition == sortedData?.length-1 ? +sortedData?.[source?.toPosition]?.waga + 50:
+         sortedData?.[source?.toPosition]?.waga -
+          (+sortedData?.[source?.toPosition]?.waga -
+            +sortedData?.[source?.toPosition - 1]?.waga) /
+            2
+        : +sortedData?.[source?.toPosition]?.waga / 2;
+    const dataToSend = {
+      projektId: projectId,
+      statusId: board?.id,
+      waga: newWaga,
+      nazwa: board?.title,
+      kolor: board?.kolor,
+    };
+    return toast.promise(
+      axios.patch(`/projekty/teacher/status`, dataToSend).then(async () => {
+        await mutateKanban();
+      })
+    );
+  }
   return (
     <>
-      <Flex gap={2}>
-        <Button>Dodaj kolumnę</Button>
+      <Flex gap={2} marginLeft={3}>
+        {role == "NAUCZYCIEL" && (
+          <Button
+            onClick={() => {
+              setSelectedStatus(null);
+              statusFormModal.onOpen();
+            }}
+          >
+            Dodaj kolumnę
+          </Button>
+        )}
         <Button
           onClick={() => {
             setSelectedTask(null);
@@ -133,7 +162,35 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
         </Button>
       </Flex>
       {controlledBoard?.columns?.length > 0 && (
-        <Board onCardDragEnd={handleCardMove}>{controlledBoard}</Board>
+        <Board
+          onCardDragEnd={handleCardMove}
+          onColumnDragEnd={handleColumnMove}
+          renderColumnHeader={(card) => (
+            <Flex justifyContent="space-between">
+              <Text color={card?.kolor} fontSize="18" fontWeight={800}>
+                {card?.title}
+              </Text>
+              <Flex gap={3}>
+                <Trash
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    setSelectedStatus(card);
+                    deleteStatusModal?.onOpen();
+                  }}
+                />
+                <Edit
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    setSelectedStatus(card);
+                    statusFormModal?.onOpen();
+                  }}
+                />
+              </Flex>
+            </Flex>
+          )}
+        >
+          {controlledBoard}
+        </Board>
       )}
       <CustomAlertDialog
         isOpen={deleteTaskModal.isOpen}
@@ -144,11 +201,27 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
           await deleteTask();
         }}
       />
+      <CustomAlertDialog
+        isOpen={deleteStatusModal.isOpen}
+        onClose={deleteStatusModal.onClose}
+        bodyText="Are you sure You want to delete this status?"
+        headerText="Delete Status"
+        onConfirm={async () => {
+          await deleteStatus();
+        }}
+      />
       <TaskFormModal
         isOpen={taskFormModal.isOpen}
         onClose={taskFormModal.onClose}
         task={selectedTask}
         projectId={projectId}
+      />
+      <StatusFormModal
+        isOpen={statusFormModal.isOpen}
+        onClose={statusFormModal.onClose}
+        status={selectedStatus}
+        projectId={projectId}
+        biggestWaga={kanbanData?.sort((a, b) => b?.waga - a?.waga)?.[0]?.waga}
       />
     </>
   );

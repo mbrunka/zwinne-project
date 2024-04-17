@@ -12,37 +12,33 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Textarea,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { Select } from "chakra-react-select";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import useSWR, { mutate } from "swr";
+import { mutate } from "swr";
+import ColorPicker from "../common/ColorPicker";
 
 type Props = {
   isOpen: boolean;
   projectId?: any;
-  task?: any;
+  status?: any;
+  biggestWaga?: number;
   onClose: () => void;
 };
 
 type Inputs = {
   nazwa: string;
-  opis: string;
-  piorytet: number;
-  statusId: number;
+  kolor: string;
 };
 
-const TaskFormModal = ({
+const StatusFormModal = ({
   projectId,
-  task,
+  status,
+  biggestWaga,
   isOpen,
   onClose,
 }: Props): React.ReactElement => {
-  const { data: statusesData, isValidating: isStatusesDataValidating } = useSWR(
-    `/projekty/${projectId}/kanban`
-  );
   const {
     reset,
     register,
@@ -52,44 +48,30 @@ const TaskFormModal = ({
   } = useForm<Inputs>();
   const toast = useToastPromise();
 
-  const statusOptions = useMemo(
-    () =>
-      statusesData?.map((item) => ({
-        value: item?.statusId,
-        label: item?.nazwa,
-      })),
-    [statusesData]
-  );
-
   useEffect(() => {
-    if (!!task)
+    if (!!status)
       reset({
-        nazwa: task?.nazwa,
-        opis: task?.opis,
-        piorytet: task?.piorytet,
-        statusId: statusOptions?.find(
-          (status) => status?.statusId == task?.statusId
-        ),
+        nazwa: status?.title,
+        kolor: status?.kolor,
       });
-    if (!task) reset({ nazwa: "", opis: "" });
-  }, [task, reset, statusOptions]);
+    if (!status) reset({ nazwa: "", kolor: "#46808c" });
+  }, [status, reset]);
 
   const onSubmit = async (data: Inputs) => {
     const dataToSend = {
       ...data,
       projektId: projectId,
-      statusId: data?.statusId?.value,
-      studentIds: [444444]
+      waga: biggestWaga ? biggestWaga + 50 : 1000,
     };
     return toast.promise(
-      !task
-        ? axios.post(`/projekty/task`, dataToSend).then(async () => {
+      !status
+        ? axios.post(`/projekty/teacher/status`, dataToSend).then(async () => {
             await mutate(`/projekty/${projectId}/kanban`);
-            reset({ nazwa: ``, opis: `` });
+            reset({ nazwa: ``, kolor: `` });
             onClose();
           })
         : axios
-            .patch(`/projekty/task/${task?.zadanieId}`, dataToSend)
+            .patch(`/projekty/teacher/status`, {...dataToSend, statusId: status?.id, waga: status?.waga})
             .then(async () => {
               await mutate(`/projekty/${projectId}/kanban`);
               onClose();
@@ -110,7 +92,7 @@ const TaskFormModal = ({
         <ModalOverlay />
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <ModalContent>
-            <ModalHeader>{!task ? "New task" : "Edit task"}</ModalHeader>
+            <ModalHeader>{!status ? "New status" : "Edit status"}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <FormControl isRequired isInvalid={!!errors?.nazwa}>
@@ -125,49 +107,21 @@ const TaskFormModal = ({
                   <FormErrorMessage>Field required</FormErrorMessage>
                 )}
               </FormControl>
-              <FormControl isRequired isInvalid={!!errors?.opis} mt={5}>
-                <FormLabel>Description</FormLabel>
-                <Textarea
-                  {...register("opis", {
-                    required: true,
-                    maxLength: 499,
-                  })}
-                />
-                {!!errors?.opis && (
-                  <FormErrorMessage>Field required</FormErrorMessage>
-                )}
-              </FormControl>
-              <FormControl isRequired isInvalid={!!errors?.piorytet} mt={5}>
-                <FormLabel>Priority</FormLabel>
-                <Input
-                  defaultValue={0}
-                  type="number"
-                  {...register("piorytet", {
-                    required: true,
-                    maxLength: 1,
-                  })}
-                />
-                {!!errors?.piorytet && (
-                  <FormErrorMessage>Field required</FormErrorMessage>
-                )}
-              </FormControl>
-
-              <FormControl isRequired isInvalid={!!errors?.statusId} mt={5}>
-                <FormLabel>Status</FormLabel>
+              <FormControl isInvalid={!!errors.kolor}>
+                <FormLabel>Color</FormLabel>
                 <Controller
-                  name="statusId"
+                  name="kolor"
                   control={control}
                   rules={{ required: true }}
-                  render={({ field }) => (
-                    <Select
-                      options={statusOptions}
-                      placeholder="Status"
-                      {...field}
-                      //   menuPortalTarget={document.body}
+                  render={() => (
+                    <ColorPicker
+                      control={control}
+                      name="kolor"
+                      header="Color"
                     />
                   )}
                 />
-                {!!errors?.statusId && (
+                {!!errors?.kolor && (
                   <FormErrorMessage>Field required</FormErrorMessage>
                 )}
               </FormControl>
@@ -191,4 +145,4 @@ const TaskFormModal = ({
   );
 };
 
-export default TaskFormModal;
+export default StatusFormModal;

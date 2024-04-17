@@ -12,12 +12,7 @@ import lombok.NoArgsConstructor;
 public class UpdateStatusRequest {
     private Long statusId;
     private Long projektId;
-
     private String nazwa;
-
-    private String opis;
-
     private String kolor;
-
     private Integer waga;
 }
