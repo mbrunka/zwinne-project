@@ -69,6 +69,7 @@ public class ZadanieRestController {
         return ResponseEntity.ok(createdZadanie);
     }
 
+    //TODO nie działa - studentIds jest chyba jako puste
     @PreAuthorize("hasAnyRole('NAUCZYCIEL', 'ADMIN')")
     @PatchMapping("/task/{zadanieId}")
     public ResponseEntity<?> updateZadanie(@PathVariable Long zadanieId, @RequestBody SetZadanieRequest request) {
@@ -140,7 +141,7 @@ public class ZadanieRestController {
         return ResponseEntity.ok().build();
     }
 
-    //TODO nic nie robi
+    //TODO nie usuwa zadania, gdy jest ono wykorzystane w jakiejś innej tabeli jako PK (np. gdy wykorzystane w zadania_student)
     @PreAuthorize("hasAnyRole('NAUCZYCIEL', 'ADMIN')")
     @DeleteMapping("/task/{zadanieId}")
     public ResponseEntity<?> deleteZadanie(@PathVariable Long zadanieId) {

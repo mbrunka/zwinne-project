@@ -156,8 +156,8 @@ public class ProjectTeacherRestController {
         return ResponseEntity.ok(statusService.setStatus(status.get()));
     }
 
-    
-    //TODO nic nie robi
+
+    //TODO nie usuwa, gdy np. do statusu są przypisane jakieś zadanie (trzeba dodać cascade w jakiś sposób)
     @DeleteMapping("/status/{statusId}")
     public ResponseEntity<Void> deleteStatus(@PathVariable Long statusId,
                                             @AuthenticationPrincipal User currentUser) {

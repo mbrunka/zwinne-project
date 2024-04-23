@@ -46,7 +46,7 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
   const deleteStatus = async () => {
     return toast.promise(
       axios
-        .delete(`/projekty/status/${selectedStatus?.statusId}`)
+        .delete(`/projekty/teacher/status/${selectedStatus?.id}`)
         .then(async () => {
           await mutateKanban();
           deleteStatusModal.onClose();
