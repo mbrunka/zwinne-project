@@ -1,4 +1,4 @@
-package com.project.controller.projekt.requests;
+package com.project.auth.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class projektIdRequest {
-    long projektId;
+public class ChangePasswordRequest {
+    private String oldPassword;
+    private String newPassword;
 }

@@ -1,8 +1,7 @@
 package com.project.controller.projekt.zadanie;
 
-import com.project.controller.projekt.requests.projektIdRequest;
 import com.project.controller.projekt.zadanie.requests.ChangeZadanieStatusRequest;
-import com.project.controller.projekt.zadanie.requests.setZadanieRequest;
+import com.project.controller.projekt.zadanie.requests.SetZadanieRequest;
 import com.project.model.*;
 import com.project.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +39,8 @@ public class ZadanieRestController {
         return ResponseEntity.ok(zadania);
     }
 
+
+
     @GetMapping("/task/{zadanieId}")
     public ResponseEntity<?> getZadanie(@PathVariable Long zadanieId) {
         Optional<Zadanie> zadanie = zadanieService.getZadanie(zadanieId);
@@ -51,7 +52,7 @@ public class ZadanieRestController {
 
     @PreAuthorize("hasAnyRole('NAUCZYCIEL', 'ADMIN')")
     @PostMapping("/task")
-    public ResponseEntity<?> createZadanie(@RequestBody setZadanieRequest request) {
+    public ResponseEntity<?> createZadanie(@RequestBody SetZadanieRequest request) {
         Projekt projekt = projektService.getProjekt(request.getProjektId()).orElseThrow();
         Optional<Status> targetStatus = statusService.getStatus(request.getStatusId());
         if (targetStatus.isEmpty()) {
@@ -69,7 +70,7 @@ public class ZadanieRestController {
 
     @PreAuthorize("hasAnyRole('NAUCZYCIEL', 'ADMIN')")
     @PatchMapping("/task/{zadanieId}")
-    public ResponseEntity<?> updateZadanie(@PathVariable Long zadanieId, @RequestBody setZadanieRequest request) {
+    public ResponseEntity<?> updateZadanie(@PathVariable Long zadanieId, @RequestBody SetZadanieRequest request) {
         Optional<Zadanie> zadanie = zadanieService.getZadanie(zadanieId);
         if (zadanie.isEmpty()) {
             return ResponseEntity.badRequest().body("Zadanie not found");
@@ -89,7 +90,7 @@ public class ZadanieRestController {
     }
 
     @PreAuthorize("hasAnyRole('NAUCZYCIEL', 'ADMIN')")
-    @PatchMapping("/task/task/status")
+    @PatchMapping("/task/status")
     public ResponseEntity<?> updateZadanieStatus(@RequestBody ChangeZadanieStatusRequest request,
                                                  @AuthenticationPrincipal User currentUser) {
         Optional<Zadanie> zadanie = zadanieService.getZadanie(request.getZadanieId());

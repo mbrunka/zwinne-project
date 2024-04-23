@@ -31,6 +31,7 @@ public class Projekt {
     @GeneratedValue
     private Long projektId;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "projekt")
     @JsonIgnoreProperties({"projekt"})
     private List<Zadanie> zadania;
@@ -44,6 +45,7 @@ public class Projekt {
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")
+    @JsonBackReference
     private Teacher teacher;
 
     @Column(unique = true)
