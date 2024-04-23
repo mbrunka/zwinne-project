@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -189,5 +190,31 @@ public class AuthenticationService {
         user.setRole(Role.NAUCZYCIEL);
         userRepository.save(user);
         return 200;
+    }
+
+    public Object changePassword(ChangePasswordRequest request, @AuthenticationPrincipal User currentUser) {
+        var user = userRepository.findByEmail(currentUser.getEmail())
+                .orElseThrow();
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            return ResponseEntity.badRequest().body("Old password is incorrect");
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        return ResponseEntity.ok().build();
+    }
+
+    public Object changeEmail(ChangeEmailRequest request, @AuthenticationPrincipal User currentUser) {
+        var user = userRepository.findByEmail(currentUser.getEmail())
+                .orElseThrow();
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            return ResponseEntity.badRequest().body("Password is incorrect");
+        }
+        var userWithNewEmail = userRepository.findByEmail(request.getNewEmail());
+        if (userWithNewEmail.isPresent()) {
+            return ResponseEntity.badRequest().body("Email is already taken");
+        }
+        user.setEmail(request.getNewEmail());
+        userRepository.save(user);
+        return ResponseEntity.ok().build();
     }
 }
