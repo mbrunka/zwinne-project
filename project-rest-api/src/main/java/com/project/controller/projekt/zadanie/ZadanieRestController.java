@@ -69,7 +69,7 @@ public class ZadanieRestController {
         return ResponseEntity.ok(createdZadanie);
     }
 
-    //TODO nie działa - studentIds jest chyba jako puste
+    //chyba już git:TODO nie działa - studentIds jest chyba jako puste
     @PreAuthorize("hasAnyRole('NAUCZYCIEL', 'ADMIN')")
     @PatchMapping("/task/{zadanieId}")
     public ResponseEntity<?> updateZadanie(@PathVariable Long zadanieId, @RequestBody SetZadanieRequest request) {
@@ -81,12 +81,17 @@ public class ZadanieRestController {
         if (targetStatus.isEmpty()) {
             return ResponseEntity.badRequest().body("Status not found");
         }
-        Set<Student> students = studentService.getStudentsByIds(request.getStudentIds()); // Fetch students from database
+        Set<Student> students = null;
+        if (request.getStudentIds() != null) {
+            students = studentService.getStudentsByIds(request.getStudentIds()); // Fetch students from database only if studentIds is not null
+        }
         zadanie.get().setNazwa(request.getNazwa());
         zadanie.get().setOpis(request.getOpis());
         zadanie.get().setStatus(targetStatus.get());
         zadanie.get().setPiorytet(request.getPiorytet());
-        zadanie.get().setStudenci(students);
+        if (students != null) {
+            zadanie.get().setStudenci(students);
+        }
         Zadanie updatedZadanie = zadanieService.setZadanie(zadanie.get());
         return ResponseEntity.ok(updatedZadanie);
     }
@@ -100,14 +105,12 @@ public class ZadanieRestController {
             return ResponseEntity.badRequest().body("Zadanie not found");
         }
         Projekt projekt = zadanie.get().getProjekt();
-        //TODO Wykomentowane bo wyrzuca błąd
-//        if (!currentUser.getStudent().getProjekty().stream()
-//                .anyMatch(proj -> proj.getProjektId().equals(projekt.getProjektId()))) {
-//            return ResponseEntity.badRequest().body("Student is not a member of the project");
-//        } else if (!currentUser.getTeacher().getProjekty().stream()
-//                .anyMatch(proj -> proj.getProjektId().equals(projekt.getProjektId()))) {
-//            return ResponseEntity.badRequest().body("Teacher is not a owner of the project");
-//        }
+        //chyba już git: TODO Wykomentowae bo wyrzuca błąd
+        if (currentUser.getRole().equals(Role.NAUCZYCIEL)) {
+            if (projekt.getTeacher() != currentUser.getTeacher()) {
+                return ResponseEntity.badRequest().body("You are not allowed to change status of this task");
+            }
+        }
         Optional<Status> targetStatus = statusService.getStatus(request.getStatusId());
         if (targetStatus.isEmpty()) {
             return ResponseEntity.badRequest().body("Status not found");
@@ -141,10 +144,19 @@ public class ZadanieRestController {
         return ResponseEntity.ok().build();
     }
 
-    //TODO nie usuwa zadania, gdy jest ono wykorzystane w jakiejś innej tabeli jako PK (np. gdy wykorzystane w zadania_student)
+    //chyba już git:TODO nie usuwa zadania, gdy jest ono wykorzystane w jakiejś innej tabeli jako PK (np. gdy wykorzystane w zadania_student)
     @PreAuthorize("hasAnyRole('NAUCZYCIEL', 'ADMIN')")
     @DeleteMapping("/task/{zadanieId}")
     public ResponseEntity<?> deleteZadanie(@PathVariable Long zadanieId) {
+        Optional<Zadanie> zadanie = zadanieService.getZadanie(zadanieId);
+        if (zadanie.isEmpty()) {
+            return ResponseEntity.badRequest().body("Zadanie not found");
+        }
+
+        // Unassign all students from the zadanie
+        zadanie.get().getStudenci().clear();
+        zadanieService.setZadanie(zadanie.get());
+
         zadanieService.deleteZadanie(zadanieId);
         return ResponseEntity.ok().build();
     }

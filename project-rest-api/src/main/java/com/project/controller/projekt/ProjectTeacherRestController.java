@@ -7,6 +7,7 @@ import com.project.controller.projekt.requests.UpdateStatusRequest;
 import com.project.model.Projekt;
 import com.project.model.Status;
 import com.project.model.User;
+import com.project.model.Zadanie;
 import com.project.repository.ProjektRepository;
 import com.project.service.ProjektService;
 import com.project.service.StatusService;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -41,6 +43,9 @@ public class ProjectTeacherRestController {
 
     @Autowired
     private ProjektRepository projektRepository;
+
+    @Autowired
+    private ZadanieService zadanieService;
 
 
     @PostMapping("/create")
@@ -106,6 +111,15 @@ public class ProjectTeacherRestController {
         return projektService.getProjekt(projektId).map(p -> {
             if (!p.getTeacher().getTeacherId().equals(currentUser.getTeacher().getTeacherId())) {
                 return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+            }
+            Projekt projekt = projektService.getProjekt(projektId).orElseThrow();
+            Set<Status> statusy = projekt.getStatusy();
+            for (Status status : statusy) {
+                Set<Zadanie> zadania = status.getZadania();
+                for (Zadanie zadanie : zadania) {
+                    zadanieService.deleteZadanie(zadanie.getZadanieId());
+                }
+                statusService.deleteStatus(status.getStatusId());
             }
             projektService.deleteProjekt(projektId);
             return new ResponseEntity<Void>(HttpStatus.OK);

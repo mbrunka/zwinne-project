@@ -33,7 +33,6 @@ public class Projekt {
 
     @JsonBackReference
     @OneToMany(mappedBy = "projekt")
-    @JsonIgnoreProperties({"projekt"})
     private List<Zadanie> zadania;
 
     @JsonBackReference
