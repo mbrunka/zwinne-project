@@ -1,6 +1,8 @@
 package com.project.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +29,7 @@ public class Zadanie {
 
     @ManyToOne
     @JoinColumn(name = "projekt_id")
+    @JsonIgnore
     private Projekt projekt;
 
     @Column(nullable = false, length = 100)
@@ -40,7 +43,7 @@ public class Zadanie {
 
     @JsonBackReference
     @ManyToMany
-    @JoinTable(name = "projekt_student",
+    @JoinTable(name = "zadanie_student",
             joinColumns = {@JoinColumn(name = "zadanie_id")},
             inverseJoinColumns = {@JoinColumn(name = "student_id")})
     private Set<Student> studenci;

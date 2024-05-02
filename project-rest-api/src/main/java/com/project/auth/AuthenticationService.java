@@ -90,7 +90,6 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
-                // TODO: change to KANDYDAT_N after implementing roles change in both frontend and backend
                 .role(Role.NAUCZYCIEL)
                 .build();
         userRepository.save(user);
@@ -144,6 +143,7 @@ public class AuthenticationService {
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
         return GetUserResponse.builder()
+                .student_id(user.getStudent().getStudentId())
                 .email(user.getEmail())
                 .role(user.getRole().name())
                 .firstName(user.getFirstName())
