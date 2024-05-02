@@ -5,6 +5,7 @@ import com.project.model.User;
 import com.project.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -63,6 +64,22 @@ public class AuthenticationController {
             @RequestBody GetUserRequest request
     ) {
         return ResponseEntity.ok(service.getUser(request));
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<?> changePassword(
+            @RequestBody ChangePasswordRequest request,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        return ResponseEntity.ok(service.changePassword(request, currentUser));
+    }
+
+    @PostMapping("/changeEmail")
+    public ResponseEntity<?> changeEmail(
+            @RequestBody ChangeEmailRequest request,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        return ResponseEntity.ok(service.changeEmail(request, currentUser));
     }
 
     @GetMapping("/getCandidates")
