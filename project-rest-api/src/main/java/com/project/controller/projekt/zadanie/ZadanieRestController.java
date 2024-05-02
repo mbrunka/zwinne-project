@@ -117,6 +117,8 @@ public class ZadanieRestController {
         return ResponseEntity.ok(updatedZadanie);
     }
 
+
+    //TODO ERROR: null value in column "projekt_id" of relation "projekt_student" violates not-null constraint
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/task/{zadanieId}/join")
     public ResponseEntity<?> joinZadanie(@PathVariable Long zadanieId, @AuthenticationPrincipal User currentUser) {

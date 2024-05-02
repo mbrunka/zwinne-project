@@ -54,6 +54,7 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
         return projektService.searchByNazwa(nazwa, pageable);
     }
 
+    //TODO cos strasznego się stało, bo teraz gdy chcę dołączyć jako student poprzed kod, to dostaję ERROR: null value in column "zadanie_id" of relation "projekt_student" violates not-null constraint
     @PostMapping(value = "/join")
     public ResponseEntity<Object> joinProject(@RequestBody JoinCodeRequest request, @AuthenticationPrincipal User currentUser) {
         Optional<Projekt> project = projektService.getProjekt(request.getJoinCode());
@@ -94,6 +95,7 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
         return ResponseEntity.ok(statusDtos);
     }
 
+    //TODO tuatj powinnien dla każdego projektu zwracany być również nauczyciel
     @PreAuthorize("hasAnyRole( 'STUDENT', 'NAUCZYCIEL')")
     @GetMapping("/my")
     public ResponseEntity<Set<Projekt>> getMyProjects(@AuthenticationPrincipal User currentUser) {

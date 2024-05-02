@@ -30,5 +30,7 @@ public interface ProjektService {
 
     //Status addStatusToProjekt(Long projektId, Long statusId);
 
+
+    //TODO tu potrzebuję jeszce zwracanie studenta przypisanego do zadania
     public StatusDto convertToDto(Status status);
 }
