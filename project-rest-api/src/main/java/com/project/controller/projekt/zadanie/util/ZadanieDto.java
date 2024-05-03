@@ -1,7 +1,6 @@
 package com.project.controller.projekt.zadanie.util;
 
 import com.project.model.Student;
-import com.project.model.Zadanie;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,11 +12,9 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StatusDto {
-    private Long statusId;
+public class ZadanieDto {
+    private Long zadanieId;
     private String nazwa;
-    private String kolor;
-    private Integer waga;
-    private Set<ZadanieDto> zadania; // Change from Zadanie to ZadanieDto
+    private String opis;
+    private Set<Student> studenci; // Add this field to represent the students assigned to the task
 }
-

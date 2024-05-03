@@ -44,7 +44,7 @@ public class Projekt {
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")
-    @JsonBackReference
+    @JsonManagedReference
     private Teacher teacher;
 
     @Column(unique = true)

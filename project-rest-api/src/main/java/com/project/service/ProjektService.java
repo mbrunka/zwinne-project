@@ -1,8 +1,10 @@
 package com.project.service;
 
 import com.project.controller.projekt.zadanie.util.StatusDto;
+import com.project.controller.projekt.zadanie.util.ZadanieDto;
 import com.project.model.Projekt;
 import com.project.model.Status;
+import com.project.model.Zadanie;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -30,7 +32,7 @@ public interface ProjektService {
 
     //Status addStatusToProjekt(Long projektId, Long statusId);
 
+    public ZadanieDto convertZadanieToDto(Zadanie zadanie);
 
-    //TODO tu potrzebuję jeszce zwracanie studenta przypisanego do zadania
-    public StatusDto convertToDto(Status status);
+    public StatusDto convertStatusToDto(Status status, Set<ZadanieDto> zadanieDtos);
 }

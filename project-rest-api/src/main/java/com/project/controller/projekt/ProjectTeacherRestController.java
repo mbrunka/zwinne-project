@@ -171,7 +171,7 @@ public class ProjectTeacherRestController {
     }
 
 
-    //TODO nie usuwa, gdy np. do statusu są przypisane jakieś zadanie (trzeba dodać cascade w jakiś sposób)
+    //chaba git:TODO nie usuwa, gdy np. do statusu są przypisane jakieś zadanie (trzeba dodać cascade w jakiś sposób)
     @DeleteMapping("/status/{statusId}")
     public ResponseEntity<Void> deleteStatus(@PathVariable Long statusId,
                                             @AuthenticationPrincipal User currentUser) {

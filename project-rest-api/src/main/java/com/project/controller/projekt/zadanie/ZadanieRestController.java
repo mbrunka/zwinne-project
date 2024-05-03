@@ -69,7 +69,6 @@ public class ZadanieRestController {
         return ResponseEntity.ok(createdZadanie);
     }
 
-    //chyba już git:TODO nie działa - studentIds jest chyba jako puste
     @PreAuthorize("hasAnyRole('NAUCZYCIEL', 'ADMIN')")
     @PatchMapping("/task/{zadanieId}")
     public ResponseEntity<?> updateZadanie(@PathVariable Long zadanieId, @RequestBody SetZadanieRequest request) {
@@ -105,7 +104,6 @@ public class ZadanieRestController {
             return ResponseEntity.badRequest().body("Zadanie not found");
         }
         Projekt projekt = zadanie.get().getProjekt();
-        //chyba już git: TODO Wykomentowae bo wyrzuca błąd
         if (currentUser.getRole().equals(Role.NAUCZYCIEL)) {
             if (projekt.getTeacher() != currentUser.getTeacher()) {
                 return ResponseEntity.badRequest().body("You are not allowed to change status of this task");
@@ -146,7 +144,6 @@ public class ZadanieRestController {
         return ResponseEntity.ok().build();
     }
 
-    //chyba już git:TODO nie usuwa zadania, gdy jest ono wykorzystane w jakiejś innej tabeli jako PK (np. gdy wykorzystane w zadania_student)
     @PreAuthorize("hasAnyRole('NAUCZYCIEL', 'ADMIN')")
     @DeleteMapping("/task/{zadanieId}")
     public ResponseEntity<?> deleteZadanie(@PathVariable Long zadanieId) {
