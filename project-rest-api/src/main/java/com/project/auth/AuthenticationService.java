@@ -191,30 +191,4 @@ public class AuthenticationService {
         userRepository.save(user);
         return 200;
     }
-
-    public Object changePassword(ChangePasswordRequest request, @AuthenticationPrincipal User currentUser) {
-        var user = userRepository.findByEmail(currentUser.getEmail())
-                .orElseThrow();
-        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
-            return ResponseEntity.badRequest().body("Old password is incorrect");
-        }
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        userRepository.save(user);
-        return ResponseEntity.ok().build();
-    }
-
-    public Object changeEmail(ChangeEmailRequest request, @AuthenticationPrincipal User currentUser) {
-        var user = userRepository.findByEmail(currentUser.getEmail())
-                .orElseThrow();
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return ResponseEntity.badRequest().body("Password is incorrect");
-        }
-        var userWithNewEmail = userRepository.findByEmail(request.getNewEmail());
-        if (userWithNewEmail.isPresent()) {
-            return ResponseEntity.badRequest().body("Email is already taken");
-        }
-        user.setEmail(request.getNewEmail());
-        userRepository.save(user);
-        return ResponseEntity.ok().build();
-    }
 }
