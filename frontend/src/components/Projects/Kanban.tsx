@@ -2,7 +2,7 @@ import { useToastPromise } from "@/hooks/useToast";
 import { getCurrentRole } from "@/utils/cookies";
 import Board from "@asseinfo/react-kanban";
 import "@asseinfo/react-kanban/dist/styles.css";
-import { Button, Flex, Text, useDisclosure } from "@chakra-ui/react";
+import { Avatar, Button, Flex, Text, useDisclosure } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Edit, Trash } from "react-feather";
@@ -72,14 +72,16 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
             id: zadanie.zadanieId,
             title: zadanie.nazwa,
             description: (
-              <div>
+              <div style={{display:"flex", flexDirection:"column"}}>
                 <label className="description-text">
                   Opis: {zadanie?.opis}
                 </label>{" "}
-                <br />
-                <label className="description-text">
-                  Priorytet: {zadanie?.piorytet}
-                </label>{" "}
+                {/* <label className="description-text">
+                  Priorytet: {zadanie?.waga}
+                </label>{" "} */}
+                
+                  {zadanie?.studenci?.map((student)=><div key={student?.studentId} style={{display:"flex", alignItems:"center", gap:'5px'}}><Avatar name={`${student?.user?.firstName} ${student?.user?.lastName}`}/>{student?.user?.firstName} {student?.user?.lastName}</div>)}
+                
                 <Flex gap={2} justifyContent="end">
                   <Trash
                     style={{ cursor: "pointer" }}
@@ -139,6 +141,7 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
       })
     );
   }
+
   return (
     <>
       <Flex gap={2} marginLeft={3}>
@@ -170,7 +173,7 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
               <Text color={card?.kolor} fontSize="18" fontWeight={800}>
                 {card?.title}
               </Text>
-              <Flex gap={3}>
+              {role == "NAUCZYCIEL" && <Flex gap={3}>
                 <Trash
                   style={{ cursor: "pointer" }}
                   onClick={() => {
@@ -185,7 +188,7 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
                     statusFormModal?.onOpen();
                   }}
                 />
-              </Flex>
+              </Flex>}
             </Flex>
           )}
         >
@@ -204,7 +207,7 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
       <CustomAlertDialog
         isOpen={deleteStatusModal.isOpen}
         onClose={deleteStatusModal.onClose}
-        bodyText="Are you sure You want to delete this status?"
+        bodyText="Are you sure You want to delete this status? This will cause a loss of any tasks with this status!"
         headerText="Delete Status"
         onConfirm={async () => {
           await deleteStatus();

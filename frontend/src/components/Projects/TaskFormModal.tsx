@@ -1,6 +1,8 @@
 import { useToastPromise } from "@/hooks/useToast";
+import { getCurrentRole } from "@/utils/cookies";
 import {
   Button,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -16,9 +18,10 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { Select } from "chakra-react-select";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
+import Cookies from "js-cookie";
 
 type Props = {
   isOpen: boolean;
@@ -43,6 +46,9 @@ const TaskFormModal = ({
   const { data: statusesData, isValidating: isStatusesDataValidating } = useSWR(
     `/projekty/${projectId}/kanban`
   );
+  const { data: taskData, isValidating: isTaskDataValidating } = useSWR(
+    `/projekty/task/${task?.zadanieId}`
+  );
   const {
     reset,
     register,
@@ -51,6 +57,7 @@ const TaskFormModal = ({
     formState: { errors, isSubmitting },
   } = useForm<Inputs>();
   const toast = useToastPromise();
+  const [processing, setProcessing] = useState<boolean>(false);
 
   const statusOptions = useMemo(
     () =>
@@ -60,6 +67,10 @@ const TaskFormModal = ({
       })),
     [statusesData]
   );
+
+  const isStudentAssigned = useMemo(()=>{
+    return task?.studenci?.find(student=>student?.user?.email==Cookies.get("email"))
+  },[task])
 
   useEffect(() => {
     if (!!task)
@@ -79,7 +90,6 @@ const TaskFormModal = ({
       ...data,
       projektId: projectId,
       statusId: data?.statusId?.value,
-      studentIds: [444444]
     };
     return toast.promise(
       !task
@@ -97,6 +107,42 @@ const TaskFormModal = ({
     );
   };
 
+  const selfAssign = async () => {
+    setProcessing(true);
+    return toast.promise(
+      axios
+        .post(`/projekty/task/${task?.zadanieId}/join`)
+        .then(async () => {
+          await mutate(`/projekty/${projectId}/kanban`);
+          reset({ nazwa: ``, opis: `` });
+          setProcessing(false);
+          onClose();
+        })
+        .catch(() => {
+          setProcessing(false);
+        })
+    );
+  };
+
+  const selfUnassign = async () => {
+    setProcessing(true);
+    return toast.promise(
+      axios
+        .post(`/projekty/task/${task?.zadanieId}/leave`)
+        .then(async () => {
+          await mutate(`/projekty/${projectId}/kanban`);
+          reset({ nazwa: ``, opis: `` });
+          setProcessing(false);
+          onClose();
+        })
+        .catch(() => {
+          setProcessing(false);
+        })
+    );
+  };
+
+  const role = getCurrentRole();
+
   return (
     <>
       <Modal
@@ -110,7 +156,20 @@ const TaskFormModal = ({
         <ModalOverlay />
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <ModalContent>
-            <ModalHeader>{!task ? "New task" : "Edit task"}</ModalHeader>
+            <ModalHeader>
+              <Flex marginRight={5} justifyContent="space-between">
+                {!task ? "New task" : "Edit task"}
+                {role == "STUDENT" && !!task && (
+                  <Button
+                    isLoading={processing}
+                    isDisabled={processing}
+                    onClick={!!isStudentAssigned ? selfUnassign : selfAssign}
+                  >
+                    {!!isStudentAssigned ? "Unassign yourself" : "Assign yourself"}
+                  </Button>
+                )}
+              </Flex>
+            </ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <FormControl isRequired isInvalid={!!errors?.nazwa}>
