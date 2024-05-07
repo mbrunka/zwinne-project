@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetUserResponse {
+    private Long student_id;
     private String token;
     private String email;
     private String role;

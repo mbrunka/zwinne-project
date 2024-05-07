@@ -1,4 +1,5 @@
 import CustomAlertDialog from "@/components/common/AlertDialog";
+import Table from "@/components/common/Table";
 import JoinProjectFrom from "@/components/Projects/JoinProjectForm";
 import ProjectFormModal from "@/components/Projects/ProjectFormModal";
 import { useToastPromise } from "@/hooks/useToast";
@@ -12,10 +13,10 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import axios from "axios";
+import { useRouter } from "next/router";
 import { useCallback, useMemo, useState } from "react";
 import useSWR from "swr";
 import Layout from "../components/Layout";
-import Table from "@/components/common/Table";
 
 const ProjectsPage = () => {
   const { data, mutate, isValidating } = useSWR("/projekty/my");
@@ -26,6 +27,7 @@ const ProjectsPage = () => {
   const leaveModal = useDisclosure();
   const projectModal = useDisclosure();
   const role = getCurrentRole();
+  const router = useRouter();
 
   const deleteProject = async (id: number) => {
     return toast.promise(
@@ -109,6 +111,16 @@ const ProjectsPage = () => {
                 >
                   Edit
                 </Button>
+                <Button
+                  size="sm"
+                  variant="outlined"
+                  color="#813531"
+                  onClick={() => {
+                    router?.push(`/projekt/${row?.original?.projektId}`);
+                  }}
+                >
+                  Details
+                </Button>
               </Flex>
             );
           },
@@ -138,13 +150,23 @@ const ProjectsPage = () => {
                 >
                   Leave
                 </Button>
+                <Button
+                  size="sm"
+                  variant="outlined"
+                  color="#813531"
+                  onClick={() => {
+                    router?.push(`/projekt/${row?.original?.projektId}`);
+                  }}
+                >
+                  Details
+                </Button>
               </Flex>
             );
           },
         },
       ];
     }
-  }, [openAlertModal, openLeaveAlertModal, projectModal, role]);
+  }, [openAlertModal, openLeaveAlertModal, projectModal, role, router]);
 
   return (
     <Layout>

@@ -30,7 +30,7 @@ public class Status {
     private Integer waga;
 
     @JsonBackReference
-    @OneToMany(mappedBy = "status")
+    @OneToMany(mappedBy = "status", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Zadanie> zadania;
 
     @JsonBackReference

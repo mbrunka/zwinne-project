@@ -3,6 +3,7 @@ package com.project.controller.projekt;
 import com.project.controller.projekt.requests.JoinCodeRequest;
 import com.project.controller.projekt.requests.ProjektIdRequest;
 import com.project.controller.projekt.zadanie.util.StatusDto;
+import com.project.controller.projekt.zadanie.util.ZadanieDto;
 import com.project.model.*;
 import com.project.service.ProjektService;
 import com.project.service.UserService;
@@ -89,7 +90,12 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
         Projekt projekt = projektService.getProjekt(projektId).orElseThrow();
         Set<Status> statusy = projekt.getStatusy();
         Set<StatusDto> statusDtos = statusy.stream()
-                .map(status -> projektService.convertToDto(status))
+                .map(status -> {
+                    Set<ZadanieDto> zadanieDtos = status.getZadania().stream()
+                            .map(zadanie -> projektService.convertZadanieToDto(zadanie)) // Convert each Zadanie to ZadanieDto
+                            .collect(Collectors.toSet());
+                    return projektService.convertStatusToDto(status, zadanieDtos); // Pass the ZadanieDto objects to the convertStatusToDto method
+                })
                 .collect(Collectors.toSet());
         return ResponseEntity.ok(statusDtos);
     }

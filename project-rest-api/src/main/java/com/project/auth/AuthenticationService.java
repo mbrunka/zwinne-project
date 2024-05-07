@@ -90,7 +90,6 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
-                // TODO: change to KANDYDAT_N after implementing roles change in both frontend and backend
                 .role(Role.NAUCZYCIEL)
                 .build();
         userRepository.save(user);
@@ -144,6 +143,7 @@ public class AuthenticationService {
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow();
         return GetUserResponse.builder()
+                .student_id(user.getStudent().getStudentId())
                 .email(user.getEmail())
                 .role(user.getRole().name())
                 .firstName(user.getFirstName())
@@ -190,31 +190,5 @@ public class AuthenticationService {
         user.setRole(Role.NAUCZYCIEL);
         userRepository.save(user);
         return 200;
-    }
-
-    public Object changePassword(ChangePasswordRequest request, @AuthenticationPrincipal User currentUser) {
-        var user = userRepository.findByEmail(currentUser.getEmail())
-                .orElseThrow();
-        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
-            return ResponseEntity.badRequest().body("Old password is incorrect");
-        }
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        userRepository.save(user);
-        return ResponseEntity.ok().build();
-    }
-
-    public Object changeEmail(ChangeEmailRequest request, @AuthenticationPrincipal User currentUser) {
-        var user = userRepository.findByEmail(currentUser.getEmail())
-                .orElseThrow();
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return ResponseEntity.badRequest().body("Password is incorrect");
-        }
-        var userWithNewEmail = userRepository.findByEmail(request.getNewEmail());
-        if (userWithNewEmail.isPresent()) {
-            return ResponseEntity.badRequest().body("Email is already taken");
-        }
-        user.setEmail(request.getNewEmail());
-        userRepository.save(user);
-        return ResponseEntity.ok().build();
     }
 }

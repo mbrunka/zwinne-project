@@ -66,22 +66,6 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.getUser(request));
     }
 
-    @PostMapping("/changePassword")
-    public ResponseEntity<?> changePassword(
-            @RequestBody ChangePasswordRequest request,
-            @AuthenticationPrincipal User currentUser
-    ) {
-        return ResponseEntity.ok(service.changePassword(request, currentUser));
-    }
-
-    @PostMapping("/changeEmail")
-    public ResponseEntity<?> changeEmail(
-            @RequestBody ChangeEmailRequest request,
-            @AuthenticationPrincipal User currentUser
-    ) {
-        return ResponseEntity.ok(service.changeEmail(request, currentUser));
-    }
-
     @GetMapping("/getCandidates")
     public ResponseEntity<GetCandidatesResponse> getCandidates(
     ) {

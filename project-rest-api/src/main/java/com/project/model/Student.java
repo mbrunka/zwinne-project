@@ -43,7 +43,7 @@ public class Student {
     @JoinTable(name = "zadania_student",
             joinColumns = {@JoinColumn(name = "student_id")},
             inverseJoinColumns = {@JoinColumn(name = "zadania_id")})
-    private Set<Projekt> zadania;
+    private Set<Zadanie> zadania;
 
     @Override
     public int hashCode() {
