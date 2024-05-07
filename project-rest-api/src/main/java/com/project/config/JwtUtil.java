@@ -32,7 +32,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
                 .issuedAt(new java.util.Date(System.currentTimeMillis()))
-                .expiration(new java.util.Date(System.currentTimeMillis() + 1000 * 60 * 20)) // 5 minute
+                .expiration(new java.util.Date(System.currentTimeMillis() + 1000 * 60 * 30)) // 5 minute
                 .issuer("https://www.project.com")
                 .claim("role", userDetails.getAuthorities())
                 .claim("extra", extraClaims)
