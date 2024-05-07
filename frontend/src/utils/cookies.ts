@@ -2,7 +2,7 @@ import Cookies from 'js-cookie';
 
 export const setTokenCookie = (token: string, refreshToken: string, email?: string) => {
     const tokenExpiry = new Date();
-    tokenExpiry.setTime(tokenExpiry.getTime() + (5 * 60 * 1000)); // 5 minutes in milliseconds
+    tokenExpiry.setTime(tokenExpiry.getTime() + (30 * 60 * 1000)); // 30 minutes in milliseconds
     Cookies.set('token', token, { expires: tokenExpiry });
 
     const refreshTokenExpiry = new Date();
