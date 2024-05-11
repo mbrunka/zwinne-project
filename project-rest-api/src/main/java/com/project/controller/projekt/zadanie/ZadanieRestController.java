@@ -27,13 +27,15 @@ public class ZadanieRestController {
     private final ZadanieService zadanieService;
     private final StatusService statusService;
     private final StudentService studentService;
+    private final UserService userService;
 
     @Autowired
-    public ZadanieRestController(ProjektService projektService, ZadanieService zadanieService, StatusService statusService, StudentService studentService) {
+    public ZadanieRestController(ProjektService projektService, ZadanieService zadanieService, StatusService statusService, StudentService studentService, UserService userService) {
         this.projektService = projektService;
         this.zadanieService = zadanieService;
         this.statusService = statusService;
         this.studentService = studentService;
+        this.userService = userService;
     }
 
     @GetMapping("/{projektId}/tasks")
@@ -150,7 +152,8 @@ public class ZadanieRestController {
         if (zadanie.isEmpty()) {
             return ResponseEntity.badRequest().body("Zadanie not found");
         }
-        zadanie.get().getStudenci().remove(currentUser.getStudent());
+        Student student = userService.getUser(currentUser.getEmail()).get().getStudent();
+        zadanie.get().getStudenci().remove(student);
         zadanieService.setZadanie(zadanie.get());
         return ResponseEntity.ok().build();
     }

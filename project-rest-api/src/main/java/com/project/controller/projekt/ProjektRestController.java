@@ -7,7 +7,9 @@ import com.project.controller.projekt.zadanie.util.ZadanieDto;
 import com.project.model.*;
 import com.project.service.ProjektService;
 import com.project.service.UserService;
+import com.project.service.ZadanieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -26,12 +28,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/projekty") // adnotacja @RequestMapping umieszczona w tym miejscu pozwala definiować
 public class ProjektRestController { // cześć wspólną adresu, wstawianą przed wszystkimi poniższymi ścieżkami
     private final ProjektService projektService; //serwis jest automatycznie wstrzykiwany poprzez konstruktor
+    private final ZadanieService zadanieService;
     private UserService userService;
 
     @Autowired
-    public ProjektRestController(ProjektService projektService, UserService userService) {
+    public ProjektRestController(ProjektService projektService, UserService userService, ZadanieService zadanieService) {
         this.projektService = projektService;
         this.userService = userService;
+        this.zadanieService = zadanieService;
     }
 
     // PRZED KAŻDĄ Z PONIŻSZYCH METOD JEST UMIESZCZONA ADNOTACJA (@GetMapping, PostMapping, ... ), KTÓRA OKREŚLA
@@ -73,6 +77,14 @@ public class ProjektRestController { // cześć wspólną adresu, wstawianą prz
         Optional<Projekt> project = projektService.getProjekt(request.getProjektId());
         if (project.isPresent()) {
             Student student = userService.getUser(currentUser.getEmail()).get().getStudent();
+
+            for (Zadanie zadanie : student.getZadania()) {
+                if (zadanie.getProjekt().equals(project.get())) {
+                    student.getZadania().remove(zadanie);
+                    zadanieService.setZadanie(zadanie);
+                }
+            }
+
             project.get().getStudents().remove(student);
             projektService.setProjekt(project.get());
         }

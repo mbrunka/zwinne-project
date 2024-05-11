@@ -40,9 +40,9 @@ public class Student {
 
     @JsonBackReference
     @ManyToMany
-    @JoinTable(name = "zadania_student",
+    @JoinTable(name = "zadanie_student",
             joinColumns = {@JoinColumn(name = "student_id")},
-            inverseJoinColumns = {@JoinColumn(name = "zadania_id")})
+            inverseJoinColumns = {@JoinColumn(name = "zadanie_id")})
     private Set<Zadanie> zadania;
 
     @Override
