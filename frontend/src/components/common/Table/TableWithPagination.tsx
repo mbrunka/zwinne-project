@@ -86,7 +86,7 @@ const TableWithPagination = ({
             />
           </Flex>
           <Text color="GrayText" fontWeight="bold">
-            {t("pageNr", { pageNr: pageIndex + 1, pagesNum: pagesNum })}
+            Page no {pageIndex + 1} of {pagesNum}
           </Text>
           <Flex>
             <IconButton

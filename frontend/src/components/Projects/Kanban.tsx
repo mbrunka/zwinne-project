@@ -80,7 +80,7 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
                   Priorytet: {zadanie?.waga}
                 </label>{" "} */}
                 
-                  {zadanie?.studenci?.map((student)=><div key={student?.studentId} style={{display:"flex", alignItems:"center", gap:'5px'}}><Avatar name={`${student?.user?.firstName} ${student?.user?.lastName}`}/>{student?.user?.firstName} {student?.user?.lastName}</div>)}
+                  {zadanie?.studenci?.map((student)=><div key={student?.studentId} style={{display:"flex", alignItems:"center", gap:'5px', marginBottom:"5px"}}><Avatar name={`${student?.user?.firstName} ${student?.user?.lastName}`}/>{student?.user?.firstName} {student?.user?.lastName}</div>)}
                 
                 <Flex gap={2} justifyContent="end">
                   <Trash

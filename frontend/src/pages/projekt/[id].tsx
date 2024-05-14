@@ -1,4 +1,5 @@
 import Kanban from "@/components/Projects/Kanban";
+import TasksList from "@/components/Projects/TasksList";
 import {
   Heading,
   Tab,
@@ -7,28 +8,28 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
-import Layout from "../../components/Layout";
 import { useRouter } from "next/router";
+import Layout from "../../components/Layout";
 
 const ProjectPage = () => {
   const router = useRouter();
   const { id } = router.query;
   return (
     <Layout>
-      <Heading marginBottom="30px">Projekt details</Heading>
+      <Heading marginBottom="30px">Project details</Heading>
       <Tabs isLazy>
         <TabList>
           <Tab>Kanban</Tab>
-          {/* <Tab>List</Tab> */}
+          <Tab>List</Tab>
         </TabList>
 
         <TabPanels>
           <TabPanel>
             <Kanban projectId={id ? +id : 0} />
           </TabPanel>
-          {/* <TabPanel>
-            <Students/>
-          </TabPanel> */}
+          <TabPanel>
+            <TasksList projectId={id ? +id : 0} />
+          </TabPanel>
         </TabPanels>
       </Tabs>
     </Layout>
