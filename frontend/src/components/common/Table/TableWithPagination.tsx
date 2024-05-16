@@ -32,6 +32,7 @@ const TableWithPagination = ({
   error,
   hidePagesButtons = false,
 }: TableWithPaginationProps): React.ReactElement => {
+
   return (
     <>
       <Table

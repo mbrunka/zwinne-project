@@ -40,6 +40,10 @@ public class ZadanieRestController {
         this.userService = userService;
     }
 
+    //TODO nie zwraca listy studentów przypisanych do zadania - niech zwraca ich jako studenci
+    //TODO nie zwraca statusów zadania - niech zwraca cały status wraz z kolorem itd.
+    //TODO mimo przekazywania take=10, zwraca strony o rozmiarze 20
+    //TODO jednak potrzebuję osobnego EP zwracającego wszystkich studentów przypisanych do projektu
     @GetMapping("/{projektId}/tasks")
     public ResponseEntity<Page<Zadanie>> getZadania(@PathVariable Long projektId,
                                                     @RequestParam(required = false) String nazwa,

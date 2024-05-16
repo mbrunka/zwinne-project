@@ -18,12 +18,12 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, ChevronUp, Edit, Trash, Trash2 } from "react-feather";
+import { ChevronDown, ChevronUp, Edit, Trash, Trash2, X } from "react-feather";
 import useSWR from "swr";
 import CustomAlertDialog from "../common/AlertDialog";
+import SelectAdvanced from "../common/SelectAdvanced";
 import TableWithPagination from "../common/Table/TableWithPagination";
 import TaskFormModal from "./TaskFormModal";
-import SelectAdvanced from "../common/SelectAdvanced";
 
 const PAGE_SIZE = 10;
 
@@ -36,37 +36,42 @@ const TasksList = ({ projectId }: { projectId?: number }) => {
   const role = getCurrentRole();
   const [pageIndex, setPageIndex] = useState(0);
   const [filtersCount, setFiltersCount] = useState(0);
-  const [showFilters,setShowFilters]=useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   const [taskTitle, setTaskTitle] = useState(null);
   const debouncedTaskTitle = useDebounce(taskTitle, 500);
   const [taskDescription, setTaskDescription] = useState(null);
+  const [sort, setSort] = useState({ sortDirection: "", accessor: "" });
   const debouncedTaskDescription = useDebounce(taskDescription, 500);
 
   const {
     data: listData,
     isValidating,
     mutate: mutateList,
-    error
+    error,
   } = useSWR(
     `/projekty/${projectId}/tasks?page=${pageIndex}&size=${PAGE_SIZE}${
-      debouncedTaskDescription && `&opis=${debouncedTaskDescription}`
-    }${selectedStudent && `&studentId=${selectedStudent?.value}`}${
-      debouncedTaskTitle && `&nazwa=${debouncedTaskTitle}`
-    }`
+      debouncedTaskDescription ? `&opis=${debouncedTaskDescription}` : ""
+    }${
+      sort?.accessor && sort?.sortDirection
+        ? `&sort=${sort?.accessor},${sort?.sortDirection}`
+        : ""
+    }${
+      selectedStudent != undefined ? `&studentId=${selectedStudent?.value}` : ""
+    }${debouncedTaskTitle ? `&nazwa=${debouncedTaskTitle}` : ""}`
   );
 
-  const {
-    data: kanbanData,
-  } = useSWR(`/projekty/${projectId}/kanban`);
-
-  console.log(listData, kanbanData);
+  const { data: kanbanData, mutate: mutateKanban } = useSWR(
+    `/projekty/${projectId}/kanban`
+  );
 
   const deleteTask = async () => {
     return toast.promise(
       axios
         .delete(`/projekty/task/${selectedTask?.zadanieId}`)
         .then(async () => {
+          setPageIndex(0);
           await mutateList();
+          await mutateKanban();
           deleteTaskModal.onClose();
           setSelectedTask(null);
         })
@@ -77,11 +82,46 @@ const TasksList = ({ projectId }: { projectId?: number }) => {
     );
   };
 
+  const columnHeaderClick = (column: any) => {
+
+    switch (column.sortDirection) {
+      case "none":
+        setSort({ sortDirection: "desc", accessor: column.id });
+        break;
+      case "asc":
+        setSort({ sortDirection: "desc", accessor: column.id });
+        break;
+      case "desc":
+        setSort({ sortDirection: "asc", accessor: column.id });
+        break;
+    }
+
+    setPageIndex(0);
+  };
+
+  //TODO display students and status as coloured badge
   const columns = useMemo(() => {
     return [
-      { Header: "Name", accessor: "nazwa" },
-      { Header: "Description", accessor: "opis" },
       {
+        id:"nazwa",
+        Header: "Name",
+        accessor: "nazwa",
+        sortDirection: sort.accessor === "nazwa" ? sort.sortDirection : "none",
+      },
+      {
+        id:"status",
+        Header: "Status",
+        accessor: "status",
+        sortDirection: sort.accessor === "status" ? sort.sortDirection : "none",
+      },
+      {
+        id:"opis",
+        Header: "Description",
+        accessor: "opis",
+        sortDirection: sort.accessor === "opis" ? sort.sortDirection : "none",
+      },
+      {
+        DisableSortBy: true,
         Header: "Students",
         Cell: ({ row }: { row: any }) => {
           return row?.original?.studenci?.map((student: any) => (
@@ -104,8 +144,10 @@ const TasksList = ({ projectId }: { projectId?: number }) => {
         },
       },
       {
+        DisableSortBy: true,
+
         Header: "",
-        id:"edition",
+        id: "edition",
         Cell: ({ row }: { row: any }) => (
           <Flex gap={2} justifyContent="end">
             <Trash
@@ -128,13 +170,10 @@ const TasksList = ({ projectId }: { projectId?: number }) => {
     ];
   }, [deleteTaskModal, taskFormModal]);
 
-  const studentOptions = [
-    { value: "low", label: "low" },
-    { value: "medium", label: "medium" },
-    { value: "high", label: "high"},
-  ];
+  //TODO add student filter
+  const studentOptions = [{ value: "TODO", label: "TODO" }];
 
-  useEffect(() => {
+  const countFilters = async () => {
     let count = 0;
 
     if (selectedStudent) count += 1;
@@ -142,10 +181,11 @@ const TasksList = ({ projectId }: { projectId?: number }) => {
     if (taskTitle) count += 1;
 
     setFiltersCount(count);
+  };
 
-    return count;
+  useEffect(() => {
+    countFilters();
   }, [selectedStudent, taskDescription, taskTitle]);
-
 
   const clearFilters = () => {
     setSelectedStudent(undefined);
@@ -171,133 +211,137 @@ const TasksList = ({ projectId }: { projectId?: number }) => {
         projectId={projectId}
       />
       <Button
-      width="fit-content"
+        width="fit-content"
         onClick={() => {
           setSelectedTask(null);
           taskFormModal.onOpen();
         }}
       >
-        Dodaj zadanie
+        Add task
       </Button>
-      <Flex gap="5px">
-      <Button size="sm" mb={2} onClick={() => setShowFilters(!showFilters)}>
-        {filtersCount > 0
-          ? `Filters (${filtersCount})`
-          : "Filters"}
-        <Icon as={showFilters ? ChevronUp : ChevronDown} size={20} ml={2} />
-      </Button>
+      <Flex gap="5px" direction="column">
+        <Flex alignItems="center">
+          <Button
+            width="fit-content"
+            size="sm"
+            mb={2}
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            {filtersCount > 0 ? `Filters (${filtersCount})` : "Filters"}
+            <Icon as={showFilters ? ChevronUp : ChevronDown} size={20} ml={2} />
+          </Button>
 
-      {filtersCount > 0 && (
-        <Tooltip hasArrow placement="top" label="Clear filters">
-          <Icon
-            cursor="pointer"
-            top="2px"
-            ml="10px"
-            w="20px"
-            h="20px"
-            as={Trash2}
-            color="red.600"
-            onClick={clearFilters}
-          />
-        </Tooltip>
-      )}
+          {filtersCount > 0 && (
+            <Tooltip hasArrow placement="top" label="Clear filters">
+              <Icon
+                cursor="pointer"
+                ml="10px"
+                w="20px"
+                h="20px"
+                as={Trash2}
+                color="red.600"
+                onClick={clearFilters}
+              />
+            </Tooltip>
+          )}
+        </Flex>
 
-      {showFilters && (
-        <Grid
-          templateColumns={{
-            base: "repeat(1, 1fr)",
-            md: "repeat(3, 1fr)",
-            lg: "repeat(4, 1fr)",
-          }}
-          mb={5}
-          gap={{ base: "10px", md: 5 }}
-        >
-          <Box>
-            <Text fontWeight="bold" mb="5px">
-              Task title
-            </Text>
-            <InputGroup>
-              <Input
-                placeholder="Search"
-                value={taskTitle}
-                onChange={(e) => {
-                  setTaskTitle(e?.target?.value);
+        {showFilters && (
+          <Grid
+            templateColumns={{
+              base: "repeat(1, 1fr)",
+              md: "repeat(3, 1fr)",
+              lg: "repeat(4, 1fr)",
+            }}
+            mb={5}
+            gap={{ base: "10px", md: 5 }}
+          >
+            <Box>
+              <Text fontWeight="bold" mb="5px">
+                Task title
+              </Text>
+              <InputGroup>
+                <Input
+                  placeholder="Search"
+                  value={taskTitle}
+                  onChange={(e) => {
+                    setTaskTitle(e?.target?.value);
+                    setPageIndex(0);
+                  }}
+                />
+                {taskTitle && (
+                  <InputRightElement p={2}>
+                    <Icon
+                      as={X}
+                      w={4}
+                      h={4}
+                      color="GrayText"
+                      _hover={{
+                        color: "black",
+                      }}
+                      transition={"color 0.3s ease-in-out"}
+                      onClick={() => setTaskTitle("")}
+                    />
+                  </InputRightElement>
+                )}
+              </InputGroup>
+            </Box>
+
+            <Box>
+              <Text fontWeight="bold" mb="5px">
+                Task description
+              </Text>
+              <InputGroup>
+                <Input
+                  placeholder="Search"
+                  value={taskDescription}
+                  onChange={(e) => {
+                    setTaskDescription(e?.target?.value);
+                    setPageIndex(0);
+                  }}
+                />
+                {taskDescription && (
+                  <InputRightElement p={2}>
+                    <Icon
+                      as={X}
+                      w={4}
+                      h={4}
+                      color="GrayText"
+                      _hover={{
+                        color: "black",
+                      }}
+                      transition={"color 0.3s ease-in-out"}
+                      onClick={() => setTaskDescription("")}
+                    />
+                  </InputRightElement>
+                )}
+              </InputGroup>
+            </Box>
+            <Box>
+              <Text fontWeight="bold" mb="5px">
+                Assigned student
+              </Text>
+              <SelectAdvanced
+                placeholder="Choose student"
+                options={studentOptions}
+                onChange={(value) => {
+                  setSelectedStudent(value);
                   setPageIndex(0);
                 }}
+                value={selectedStudent}
+                isClearable
               />
-              {taskTitle && (
-                <InputRightElement p={2}>
-                  <Icon
-                    as={X}
-                    w={4}
-                    h={4}
-                    color="GrayText"
-                    _hover={{
-                      color: "black",
-                    }}
-                    transition={"color 0.3s ease-in-out"}
-                    onClick={() => setTaskTitle("")}
-                  />
-                </InputRightElement>
-              )}
-            </InputGroup>
-          </Box>
-
-          <Box>
-            <Text fontWeight="bold" mb="5px">
-              Task description
-            </Text>
-            <InputGroup>
-              <Input
-                placeholder="Search"
-                value={taskDescription}
-                onChange={(e) => {
-                  setTaskDescription(e?.target?.value);
-                  setPageIndex(0);
-                }}
-              />
-              {taskDescription && (
-                <InputRightElement p={2}>
-                  <Icon
-                    as={X}
-                    w={4}
-                    h={4}
-                    color="GrayText"
-                    _hover={{
-                      color: "black",
-                    }}
-                    transition={"color 0.3s ease-in-out"}
-                    onClick={() => setTaskDescription("")}
-                  />
-                </InputRightElement>
-              )}
-            </InputGroup>
-          </Box>
-          <Box>
-            <Text fontWeight="bold" mb="5px">
-            Assigned student
-            </Text>
-            <SelectAdvanced
-              placeholder="Choose student"
-              options={studentOptions}
-              onChange={(value) => {
-                setSelectedStudent(value);
-                setPageIndex(0);
-              }}
-              value={selectedStudent}
-              isClearable
-            />
-          </Box>
-          </Grid>)}
+            </Box>
+          </Grid>
+        )}
       </Flex>
       {isValidating && !listData && <Spinner color="red.700" />}
-      {listData?.totalElements == 0 && (
-        <Text mt="10px">No tasks</Text>
-      )}
+      {listData?.totalElements == 0 && <Text mt="10px">No tasks</Text>}
       {listData?.totalElements > 0 && (
         <TableWithPagination
           data={listData?.content || []}
           columns={columns}
+          columnHeaderClick={columnHeaderClick}
           count={listData?.totalElements}
           error={error}
           pageIndex={pageIndex}

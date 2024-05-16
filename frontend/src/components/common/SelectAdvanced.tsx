@@ -1,34 +1,33 @@
 import React from "react";
 import Select, { StylesConfig } from "react-select";
 import makeAnimated from "react-select/animated";
-import { useTranslation } from "next-i18next";
 
 const animatedComponents = makeAnimated();
 
 const selectStyles = (isInvalid: boolean): StylesConfig => ({
   control: (provided, state) => ({
     ...provided,
-    borderRadius: 0,
-    padding: "3.35px 10px",
+    borderRadius: 3,
+    padding: "5px 10px",
     boxShadow: state.isFocused ? "0" : "0",
     borderColor: isInvalid
       ? state.isFocused
-        ? "#d40000"
-        : "#d40000"
+        ? "#dab5b3"
+        : "#dab5b3"
       : state.isFocused
-      ? "#FFFFFF"
-      : "#FFFFFF",
+      ? "#dab5b3"
+      : "#dab5b3",
     transition: "border-color .25s ease-in-out",
     fontSize: "14px",
     minHeight: "1px",
     "&:hover": {
       borderColor: isInvalid
         ? state.isFocused
-          ? "#d40000"
-          : "#d40000"
+          ? "#dab5b3"
+          : "#dab5b3"
         : state.isFocused
-        ? "#FFFFFF"
-        : "#FFFFFF",
+        ? "#dab5b3"
+        : "#dab5b3",
     },
   }),
   input: (provided) => ({
@@ -86,7 +85,7 @@ const selectStyles = (isInvalid: boolean): StylesConfig => ({
     ...provided,
     borderLeftWidth: "1px",
     borderLeftColor: "#cbd5e0",
-    borderRadius: 0,
+    borderRadius: 5,
     marginLeft: ".25rem",
     "&:hover": {
       background: "#e0e0de",
@@ -97,8 +96,8 @@ const selectStyles = (isInvalid: boolean): StylesConfig => ({
     ...provided,
     marginTop: "5px",
     boxShadow: "none",
-    border: 0,
-    borderRadius: 0,
+    border: 1,
+    borderRadius: 5,
     zIndex: 9,
   }),
   menuList: (provided) => ({
@@ -113,15 +112,15 @@ const selectStyles = (isInvalid: boolean): StylesConfig => ({
       ? "#FFFFFF"
       : "#000000",
     backgroundColor: state.isSelected
-      ? "#5C5D5E"
+      ? "#5c5d5e"
       : state.isFocused
-      ? "#d40000"
+      ? "#813531"
       : "#FFFFFF",
     ":active": {
       backgroundColor: state.isSelected
-        ? "#d40000"
+        ? "#813531"
         : state.isFocused
-        ? "#d40000"
+        ? "#813531"
         : "#FFFFFF",
     },
     fontSize: "14px",
@@ -148,7 +147,7 @@ const selectStyles = (isInvalid: boolean): StylesConfig => ({
     padding: ".5rem",
     paddingBottom: ".25rem",
     margin: 0,
-    color: "#a0aec0",
+    color: "#5c5d5e",
     fontSize: "11px",
   }),
 });
@@ -164,7 +163,6 @@ const SelectAdvanced = React.forwardRef(
     },
     ref
   ): React.ReactElement => {
-
     return (
       <Select
         className="react-select-container"
