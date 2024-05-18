@@ -3,6 +3,7 @@ package com.project.controller.projekt.zadanie;
 import com.project.auth.AuthenticationService;
 import com.project.controller.projekt.zadanie.requests.ChangeZadanieStatusRequest;
 import com.project.controller.projekt.zadanie.requests.SetZadanieRequest;
+import com.project.controller.projekt.zadanie.util.ZadanieDto;
 import com.project.model.*;
 import com.project.service.*;
 import org.slf4j.Logger;
@@ -40,18 +41,19 @@ public class ZadanieRestController {
         this.userService = userService;
     }
 
-    //TODO nie zwraca listy studentów przypisanych do zadania - niech zwraca ich jako studenci
-    //TODO nie zwraca statusów zadania - niech zwraca cały status wraz z kolorem itd.
-    //TODO mimo przekazywania take=10, zwraca strony o rozmiarze 20
-    //TODO jednak potrzebuję osobnego EP zwracającego wszystkich studentów przypisanych do projektu
+    //zwraca listy studentów przypisanych do zadania - niech zwraca ich jako studenci
+    //zwraca statusów zadania - niech zwraca cały status wraz z kolorem itd.
+    //mimo przekazywania take=10, zwraca strony o rozmiarze 20 <= użyj size=10 jeśli to nie problem
+    //istnieje EP zwracającego wszystkich studentów przypisanych do projektu ({{base_url}}/api/v1/projekty/1)
     @GetMapping("/{projektId}/tasks")
-    public ResponseEntity<Page<Zadanie>> getZadania(@PathVariable Long projektId,
-                                                    @RequestParam(required = false) String nazwa,
-                                                    @RequestParam(required = false) String opis,
-                                                    @RequestParam(required = false) Long studentId,
-                                                    Pageable pageable) {
+    public ResponseEntity<Page<ZadanieDto>> getZadania(@PathVariable Long projektId,
+                                                       @RequestParam(required = false) String nazwa,
+                                                       @RequestParam(required = false) String opis,
+                                                       @RequestParam(required = false) Long studentId,
+                                                       Pageable pageable) {
         Page<Zadanie> zadania = zadanieService.getZadaniaByProjektIdAndFilters(projektId, nazwa, opis, studentId, pageable);
-        return ResponseEntity.ok(zadania);
+        Page<ZadanieDto> zadaniaDto = zadania.map(zadanie -> new ZadanieDto(zadanie.getZadanieId(), zadanie.getNazwa(), zadanie.getOpis(), zadanie.getStudenci(), zadanie.getStatus()));
+        return ResponseEntity.ok(zadaniaDto);
     }
 
 
@@ -121,12 +123,12 @@ public class ZadanieRestController {
         }
         Projekt projekt = zadanie.get().getProjekt();
         if (currentUser.getRole().equals(Role.NAUCZYCIEL)) {
-            //TODO utworzyłam nauczycielem projekt, a potem nie mogłam zmieniąc ststusów zadań
-//            if (projekt.getTeacher() != currentUser.getTeacher()) {
-//                return ResponseEntity.badRequest().body("You are not allowed to change status of this task");
-//            }
+            //na postmanie działa, utworzyłam nauczycielem projekt, a potem nie mogłam zmieniąc ststusów zadań
+            if (projekt.getTeacher() != currentUser.getTeacher()) {
+                return ResponseEntity.badRequest().body("You are not allowed to change status of this task");
+            }
         }
-        if (currentUser.getRole().equals(Role.STUDENT)) {
+        else if (currentUser.getRole().equals(Role.STUDENT)) {
             //TODO utworzyłam nauczycielem projekt, a potem nie mogłam zmieniąc ststusów zadań
 //            if (projekt.getTeacher() != currentUser.getTeacher()) {
 //                return ResponseEntity.badRequest().body("You are not allowed to change status of this task");
@@ -153,7 +155,7 @@ public class ZadanieRestController {
         return ResponseEntity.ok().build();
     }
 
-    //TODO odpisywanie się nie działa. Dostaję 200, ale nic się nie zmienia
+    //odpisywanie się nie działa. Dostaję 200, ale nic się nie zmienia // na postmanie działa
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/task/{zadanieId}/leave")
     public ResponseEntity<?> leaveZadanie(@PathVariable Long zadanieId, @AuthenticationPrincipal User currentUser) {
