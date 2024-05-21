@@ -186,23 +186,23 @@ const Table = <D extends {}>({
                 >
                   {headerGroup.headers.map((column) => (
                     <>
-                      {onHeaderClick ? (
+                      {!!onHeaderClick ? (
                         <TableCell
                           px={4}
                           py={3}
                           key={column.id}
                           {...column.getHeaderProps()}
                           justifyContent="space-between"
-                          {...column.getSortByToggleProps()}
-                          onClick={() => onHeaderClick(column)}
+                          // {...column.getSortByToggleProps()}
+                          onClick={() => {onHeaderClick(column)}}
                         >
                           <Flex align="center" justify="space-between" w="100%">
                             <Text fontWeight="bold">
                               {column.render("Header")}
                             </Text>
-                            {column.sortDirection === "DESC" ||
-                            column.sortDirection === "ASC" ? (
-                              column.sortDirection === "DESC" ? (
+                            {column.sortDirection === "desc" ||
+                            column.sortDirection === "asc" ? (
+                              column.sortDirection === "desc" ? (
                                 <ChevronDown size={20} />
                               ) : (
                                 <ChevronUp size={20} />
@@ -320,12 +320,12 @@ const Table = <D extends {}>({
                       py={3}
                       key={column.id}
                       width={column.width || "unset"}
-                      {...column.getHeaderProps()}
+                      {...column?.getHeaderProps()}
                       justifyContent="space-between"
-                      {...column.getSortByToggleProps({ title: undefined })}
+                      {...column?.getSortByToggleProps({ title: undefined })}
                     >
                       <Text textTransform="uppercase" fontWeight="500">
-                        {column.render("Header")}
+                        {column?.render("Header")}
                       </Text>
                       {column.isSorted ? (
                         column.isSortedDesc ? (
@@ -342,13 +342,13 @@ const Table = <D extends {}>({
               ));
             }}
             itemContent={(index) => {
-              const row = rows[index];
+              const row = rows?.[index];
               prepareRow(row);
 
-              return row.cells.map((cell) => {
+              return row?.cells?.map((cell) => {
                 return (
                   <TableCell
-                    key={cell.row.index}
+                    key={cell?.row?.index}
                     justifyContent="flex-start"
                     px={4}
                     py={3}
@@ -356,6 +356,7 @@ const Table = <D extends {}>({
                     maxWidth={cell.column.maxWidth}
                     {...cell.getCellProps()}
                   >
+                    
                     {cell.render("Cell")}
                   </TableCell>
                 );
@@ -374,7 +375,7 @@ const Table = <D extends {}>({
                   {...headerGroup.getHeaderGroupProps()}
                   bg="gray.700"
                 >
-                  {headerGroup.headers.map((column) => (
+                  {headerGroup?.headers?.map((column) => (
                     <TableCell
                       px="15px"
                       py="10px"
@@ -383,14 +384,16 @@ const Table = <D extends {}>({
                       {...column.getHeaderProps()}
                       justifyContent="space-between"
                       {...column.getSortByToggleProps({ title: undefined })}
+                      // {...column.getSortByToggleProps()}
+                      onClick={() => {onHeaderClick(column)}}
                     >
                       <Flex justify="space-between">
                         <Text fontWeight="600" color="white">
                           {column.render("Header")}
                         </Text>
                         <Box w="15px" h="15px">
-                          {column.isSorted &&
-                            (column.isSortedDesc ? (
+                          {column.sortDirection &&
+                            (column.sortDirection=="desc" ? (
                               <ChevronDown size={15} />
                             ) : (
                               <ChevronUp size={15} />

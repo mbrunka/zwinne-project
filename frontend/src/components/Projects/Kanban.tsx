@@ -6,7 +6,7 @@ import { Avatar, Button, Flex, Text, useDisclosure } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Edit, Trash } from "react-feather";
-import useSWR from "swr";
+import useSWR, {mutate} from "swr";
 import CustomAlertDialog from "../common/AlertDialog";
 import StatusFormModal from "./StatusFormModal";
 import TaskFormModal from "./TaskFormModal";
@@ -33,6 +33,7 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
         .delete(`/projekty/task/${selectedTask?.zadanieId}`)
         .then(async () => {
           await mutateKanban();
+          await mutate(`/projekty/${projectId}/tasks`);
           deleteTaskModal.onClose();
           setSelectedTask(null);
         })
@@ -74,13 +75,13 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
             description: (
               <div style={{display:"flex", flexDirection:"column"}}>
                 <label className="description-text">
-                  Opis: {zadanie?.opis}
+                  Description: {zadanie?.opis}
                 </label>{" "}
                 {/* <label className="description-text">
                   Priorytet: {zadanie?.waga}
                 </label>{" "} */}
                 
-                  {zadanie?.studenci?.map((student)=><div key={student?.studentId} style={{display:"flex", alignItems:"center", gap:'5px'}}><Avatar name={`${student?.user?.firstName} ${student?.user?.lastName}`}/>{student?.user?.firstName} {student?.user?.lastName}</div>)}
+                  {zadanie?.studenci?.map((student)=><div key={student?.studentId} style={{display:"flex", alignItems:"center", gap:'5px', marginBottom:"5px"}}><Avatar name={`${student?.user?.firstName} ${student?.user?.lastName}`}/>{student?.user?.firstName} {student?.user?.lastName}</div>)}
                 
                 <Flex gap={2} justifyContent="end">
                   <Trash
@@ -152,7 +153,7 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
               statusFormModal.onOpen();
             }}
           >
-            Dodaj kolumnę
+            Add column
           </Button>
         )}
         <Button
@@ -161,7 +162,7 @@ const Kanban = ({ projectId }: { projectId?: number }) => {
             taskFormModal.onOpen();
           }}
         >
-          Dodaj zadanie
+          Add task
         </Button>
       </Flex>
       {controlledBoard?.columns?.length > 0 && (
