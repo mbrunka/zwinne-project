@@ -156,9 +156,11 @@ const SelectAdvanced = React.forwardRef(
   (
     {
       isInvalid = false,
+      menuPlacement="bottom",
       ...rest
     }: {
       isInvalid?: boolean;
+      menuPlacement?: "bottom" | "top",
       [x: string]: unknown;
     },
     ref
@@ -171,6 +173,7 @@ const SelectAdvanced = React.forwardRef(
         placeholder="Choose"
         noOptionsMessage={() => "No options"}
         components={animatedComponents}
+        menuPlacement={menuPlacement}
         ref={ref}
         {...rest}
       />

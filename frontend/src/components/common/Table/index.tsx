@@ -320,12 +320,12 @@ const Table = <D extends {}>({
                       py={3}
                       key={column.id}
                       width={column.width || "unset"}
-                      {...column.getHeaderProps()}
+                      {...column?.getHeaderProps()}
                       justifyContent="space-between"
-                      {...column.getSortByToggleProps({ title: undefined })}
+                      {...column?.getSortByToggleProps({ title: undefined })}
                     >
                       <Text textTransform="uppercase" fontWeight="500">
-                        {column.render("Header")}
+                        {column?.render("Header")}
                       </Text>
                       {column.isSorted ? (
                         column.isSortedDesc ? (
@@ -342,13 +342,13 @@ const Table = <D extends {}>({
               ));
             }}
             itemContent={(index) => {
-              const row = rows[index];
+              const row = rows?.[index];
               prepareRow(row);
 
-              return row.cells.map((cell) => {
+              return row?.cells?.map((cell) => {
                 return (
                   <TableCell
-                    key={cell.row.index}
+                    key={cell?.row?.index}
                     justifyContent="flex-start"
                     px={4}
                     py={3}
@@ -375,7 +375,7 @@ const Table = <D extends {}>({
                   {...headerGroup.getHeaderGroupProps()}
                   bg="gray.700"
                 >
-                  {headerGroup.headers.map((column) => (
+                  {headerGroup?.headers?.map((column) => (
                     <TableCell
                       px="15px"
                       py="10px"

@@ -3,6 +3,7 @@ import { useToastPromise } from "@/hooks/useToast";
 import { getCurrentRole } from "@/utils/cookies";
 import {
   Avatar,
+  Badge,
   Box,
   Button,
   Flex,
@@ -60,8 +61,8 @@ const TasksList = ({ projectId }: { projectId?: number }) => {
     }${debouncedTaskTitle ? `&nazwa=${debouncedTaskTitle}` : ""}`
   );
 
-  const { data: kanbanData, mutate: mutateKanban } = useSWR(
-    `/projekty/${projectId}/kanban`
+  const { data: projectData, mutate: mutateProjectData } = useSWR(
+    `/projekty/${projectId}`
   );
 
   const deleteTask = async () => {
@@ -71,7 +72,7 @@ const TasksList = ({ projectId }: { projectId?: number }) => {
         .then(async () => {
           setPageIndex(0);
           await mutateList();
-          await mutateKanban();
+          await mutateProjectData();
           deleteTaskModal.onClose();
           setSelectedTask(null);
         })
@@ -83,7 +84,6 @@ const TasksList = ({ projectId }: { projectId?: number }) => {
   };
 
   const columnHeaderClick = (column: any) => {
-
     switch (column.sortDirection) {
       case "none":
         setSort({ sortDirection: "desc", accessor: column.id });
@@ -103,19 +103,22 @@ const TasksList = ({ projectId }: { projectId?: number }) => {
   const columns = useMemo(() => {
     return [
       {
-        id:"nazwa",
+        id: "nazwa",
         Header: "Name",
         accessor: "nazwa",
         sortDirection: sort.accessor === "nazwa" ? sort.sortDirection : "none",
       },
       {
-        id:"status",
+        id: "status",
         Header: "Status",
-        accessor: "status",
+        accessor: "status.nazwa",
         sortDirection: sort.accessor === "status" ? sort.sortDirection : "none",
+        Cell: ({ row }: { row: any }) => {
+          return <Badge>{row?.original?.status?.nazwa}</Badge>;
+        },
       },
       {
-        id:"opis",
+        id: "opis",
         Header: "Description",
         accessor: "opis",
         sortDirection: sort.accessor === "opis" ? sort.sortDirection : "none",
@@ -131,8 +134,8 @@ const TasksList = ({ projectId }: { projectId?: number }) => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                gap: "5px",
-                marginBottom: "5px",
+                gap: "2px",
+                marginBottom: "2px",
               }}
             >
               <Avatar
@@ -168,11 +171,18 @@ const TasksList = ({ projectId }: { projectId?: number }) => {
         ),
       },
     ];
-  }, [deleteTaskModal, taskFormModal]);
+  }, [deleteTaskModal, sort.accessor, sort.sortDirection, taskFormModal]);
 
-  //TODO add student filter
-  const studentOptions = [{ value: "TODO", label: "TODO" }];
+  const studentOptions = useMemo(() => {
+    return projectData?.students?.map((student) => {
+      return {
+        label: student?.user?.fullName,
+        value: student?.studentId,
+      };
+    });
+  }, [projectData?.students]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const countFilters = async () => {
     let count = 0;
 
@@ -185,7 +195,7 @@ const TasksList = ({ projectId }: { projectId?: number }) => {
 
   useEffect(() => {
     countFilters();
-  }, [selectedStudent, taskDescription, taskTitle]);
+  }, [countFilters, selectedStudent, taskDescription, taskTitle]);
 
   const clearFilters = () => {
     setSelectedStudent(undefined);
