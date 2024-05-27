@@ -14,7 +14,7 @@ import {
     ModalFooter,
     useDisclosure,
     FormErrorMessage,
-    FormControl, FormLabel, useToast,
+    FormControl, FormLabel, useToast, Box,
 } from '@chakra-ui/react';
 import Layout from '../components/Layout';
 import React, {useState} from "react";
@@ -166,7 +166,7 @@ const SettingsPage = () => {
                 <InputGroup>
                     <FormControl isRequired isInvalid={!!formEmailState.errors?.newEmail}>
                         <FormLabel marginBottom="20px" fontSize="30">Change e-mail address</FormLabel>
-                        <InputLeftAddon backgroundColor="#FFE5CC" width="160px" height="45px" fontSize="15"
+                        <InputLeftAddon backgroundColor="#FFE5CC" width="180px" height="45px" fontSize="15"
                                         marginBottom="20px" paddingLeft="10px" float="left">New e-mail
                             address</InputLeftAddon>
                         <Input marginBottom="20px" width="500px" height="45px" size='sm' float="left"
@@ -186,7 +186,7 @@ const SettingsPage = () => {
 
                 </InputGroup>
                 <InputGroup>
-                    <InputLeftAddon backgroundColor="#FFE5CC" width="160px" height="45px" fontSize="15"
+                    <InputLeftAddon backgroundColor="#FFE5CC" width="180px" height="45px" fontSize="15"
                                     marginBottom="20px" paddingLeft="10px">Password </InputLeftAddon>
                     <Input type="password" marginBottom="20px" width="500px" height="45px" size='sm'
                            {...formEmail.register("password", {
@@ -194,12 +194,15 @@ const SettingsPage = () => {
                            })}
                     ></Input>
                 </InputGroup>
-                <Button marginBottom="160px" width="160px" height="40px"
-                        onClick={() => setShowConfirmationEmail(true)}>Change</Button>
-                {showConfirmationEmail && <> <Button type="submit">Confirm</Button> <Button
-                    onClick={() => setShowConfirmationEmail(false)}>No</Button> </>}
+                <Button width="160px" height="40px" marginRight="60px" onClick={() => setShowConfirmationEmail(true)}>Change</Button>
+                    {showConfirmationEmail && <>
+                    <Button width="100px" height="35px" marginRight="10px" type="submit">Confirm</Button>
+                    <Button width="100px" height="35px" onClick={() => setShowConfirmationEmail(false)}>No</Button> </>}
+
+                <Box height="80px" />
 
             </form>
+
             <form
                 noValidate
                 onSubmit={formPassword.handleSubmit(onChangePasswordSubmit)}
@@ -208,7 +211,7 @@ const SettingsPage = () => {
                 <InputGroup>
                     <FormControl isRequired isInvalid={!!formPasswordState.errors?.oldPassword}>
                         <FormLabel marginBottom="20px" fontSize="30">Change password</FormLabel>
-                        <InputLeftAddon backgroundColor="#FFE5CC" width="160px" height="45px" fontSize="15"
+                        <InputLeftAddon backgroundColor="#FFE5CC" width="180px" height="45px" fontSize="15"
                                         marginBottom="20px" paddingLeft="10px" float="left">Old password</InputLeftAddon>
                         <Input type="password" marginBottom="20px" width="500px" height="45px" size='sm' float="left"
                                {...formPassword.register("oldPassword", {
@@ -222,9 +225,8 @@ const SettingsPage = () => {
                 </InputGroup>
                 <InputGroup>
                     <FormControl isRequired isInvalid={!!formPasswordState.errors?.newPassword}>
-
-                    <InputLeftAddon backgroundColor="#FFE5CC" width="160px" height="45px" fontSize="15"
-                                    marginBottom="20px" paddingLeft="10px">New password</InputLeftAddon>
+                    <InputLeftAddon backgroundColor="#FFE5CC" width="180px" height="45px" fontSize="15"
+                                    marginBottom="20px" paddingLeft="10px" float="left">New password</InputLeftAddon>
                     <Input type="password" marginBottom="20px" width="500px" height="45px" size='sm'
                            {...formPassword.register("newPassword", {
                                required: true,
@@ -242,18 +244,18 @@ const SettingsPage = () => {
                     </FormControl>
                 </InputGroup>
                 <InputGroup>
-                    <InputLeftAddon backgroundColor="#FFE5CC" width="160px" height="45px" fontSize="15"
-                                    marginBottom="20px" paddingLeft="10px">Confirm new password </InputLeftAddon>
+                    <InputLeftAddon backgroundColor="#FFE5CC" width="180px" height="45px" fontSize="15"
+                                    marginBottom="20px" paddingLeft="10px" float="left">Confirm new password </InputLeftAddon>
                     <Input type="password" marginBottom="20px" width="500px" height="45px" size='sm'
                            {...formPassword.register("repeatNewPassword", {
                                required: true,
                            })}
                     ></Input>
                 </InputGroup>
-                <Button marginBottom="160px" width="160px" height="40px"
-                        onClick={() => setShowConfirmationPassword(true)}>Change</Button>
-                {showConfirmationPassword && <> <Button type="submit">Confirm</Button> <Button
-                    onClick={() => setShowConfirmationPassword(false)}>No</Button> </>}
+                <Button width="160px" height="40px" marginRight="60px" onClick={() => setShowConfirmationPassword(true)}>Change</Button>
+                    {showConfirmationPassword && <>
+                    <Button width="100px" height="35px" marginRight="10px" type="submit">Confirm</Button>
+                    <Button width="100px" height="35px" onClick={() => setShowConfirmationPassword(false)}>No</Button> </>}
 
             </form>
                 <Flex direction="column" width="100%" alignItems="center" gap={5} mt="15vh">
