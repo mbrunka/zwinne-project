@@ -14,7 +14,7 @@ import {
     ModalFooter,
     useDisclosure,
     FormErrorMessage,
-    FormControl, FormLabel,
+    FormControl, FormLabel, useToast,
 } from '@chakra-ui/react';
 import Layout from '../components/Layout';
 import React, {useState} from "react";
@@ -23,19 +23,17 @@ import { isEmail, isStrongPassword } from "validator";
 import {useForm} from "react-hook-form";
 import {getCurrentToken} from "@/utils/cookies";
 import {ButtonGroup} from "chakra-ui";
+import {signOut} from "@/utils/signOut";
+import {router} from "next/client";
 
 type Inputs = {
     email: string;
     password: string;
-    old_password: string;
-    new_password: string;
-    repeat_new_password: string;
 }
 
 const SettingsPage = () => {
+    const toast = useToast();
 
-    //const { isOpen: isOpen1Modal, onOpen: onOpen1Modal, onClose: onClose1Modal } = useDisclosure();
-    const { isOpen: isOpen2Modal, onOpen: onOpen2Modal, onClose: onClose2Modal } = useDisclosure();
 
     const [showConfirmation, setShowConfirmation] = useState(false);
 
@@ -47,37 +45,52 @@ const SettingsPage = () => {
      } = useForm<Inputs>();
 
     const onChangeEmailSubmit = (data: Inputs) => {
-
-        // if (data.new_password != data.repeat_new_password) {
-        //     //setError("Different Passwords!");
-        //     return;
-        // }
-
         const dataToSend = {
-            email: data.email,
+            newEmail: data.email,
             password: data.password,
         };
-        console.log(dataToSend);
+        // console.log(dataToSend);
         setShowConfirmation(false);
 
         axios.post("user/changeEmail", {
             ...dataToSend,
-        }, { headers: {
-            Authorization: getCurrentToken(), //dostaje 403
-        }})
-        .then((data) => {
-           // setError(null);
-            console.log(data);
+        }, {
+            headers: {
+                Authorization: `Bearer ${getCurrentToken()}`,
+            }
         })
-        .catch((error) => {
-            console.log(error);
-        });
+            .then((response) => {
+                if (response.status === 200) {
+                    toast({
+                        title: 'Successfully changed the email',
+                        description: "You will be logged out in 3 seconds",
+                        status: 'success',
+                        duration: 3000,
+                        isClosable: true,
+                    })
+                    logoutIn(3000);
+                }
+            })
+            .catch((error) => {
+                // console.log("Jestem w error");
+                console.log(error);
+                const response = error.response;
+                const message = response.data;
+                toast({
+                    title: `Error (${response.status})`,
+                    description: message,
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                })
+            })
+    }
 
-        // const dataToSendPasswordChange = {
-        //     old_password: data.old_password,
-        //     new_password: data.new_password,
-        // };
-
+    function logoutIn(timeMs: number) {
+        setTimeout(() => {
+            signOut();
+            router.push("/signin");
+        }, timeMs)
     }
 
     return (
@@ -127,36 +140,6 @@ const SettingsPage = () => {
 
                 </form>
 
-            <Text marginBottom="20px" fontSize="30">Change password</Text>
-            <InputGroup>
-                <InputLeftAddon backgroundColor="#FFE5CC" width="160px" fontSize="15" marginBottom="20px" paddingLeft="10px">Old password </InputLeftAddon>
-                <Input name="settings_old_password" placeholder='' marginBottom="20px" width="500px" size='sm'
-
-                ></Input>
-            </InputGroup>
-            <InputGroup>
-                <InputLeftAddon backgroundColor="#FFE5CC" width="160px" fontSize="15" marginBottom="20px" paddingLeft="10px">New password </InputLeftAddon>
-                <Input name="settings_new_password" placeholder='' marginBottom="20px" width="500px" size='sm'></Input>
-            </InputGroup>
-            <InputGroup>
-                <InputLeftAddon backgroundColor="#FFE5CC" width="160px" fontSize="15" marginBottom="20px" paddingLeft="10px">Repeat new password </InputLeftAddon>
-                <Input name="settings_new_password_check" placeholder='' marginBottom="20px" width="500px" size='sm'></Input>
-            </InputGroup>
-            <Button marginBottom="10px" width="160px" onClick={() => onOpen2Modal()}>Change</Button>
-
-            <>
-                <Modal  isOpen={isOpen2Modal} onClose={onClose2Modal}>
-                    <ModalOverlay/>
-                    <ModalContent>
-                        <ModalHeader>Warning!</ModalHeader>
-                        <ModalBody>Do you really want to change password?</ModalBody>
-                        <ModalFooter>
-                            <Button mr={3} onClick={onClose2Modal}>Tak</Button>
-                            <Button mr={3} onClick={onClose2Modal}>Nie</Button>
-                        </ModalFooter>
-                    </ModalContent>
-                </Modal>
-            </>
 
             <Flex direction="column" width="100%" alignItems="center" gap={5} mt="15vh">
             </Flex>
