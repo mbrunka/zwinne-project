@@ -37,7 +37,7 @@ const UserMenu = (): React.ReactElement => {
 
         <MenuDivider />
 
-        <MenuItem icon={<Settings />} onClick={() => router.push("/profile")}>
+        <MenuItem icon={<Settings />} onClick={() => router.push("/settings")}>
           Settings
         </MenuItem>
 
