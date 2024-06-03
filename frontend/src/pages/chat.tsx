@@ -1,10 +1,16 @@
 import { useToastPromise } from "@/hooks/useToast";
 import { Button, Flex } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Layout from "../components/Layout";
-
+import { connect, disconnect, subscribe, sendMessage } from "../utils/WebSocketUtil"
+import Cookies from "js-cookie";
 import { Chat, Message } from "react-chat-module";
 import "react-chat-module/dist/index.css";
+
+const jwtToken = Cookies.get("token");
+console.log(jwtToken)
+
+const SOCKET_URL = 'ws://localhost:8080/chat';
 
 const PAGE_SIZE = 4;
 
@@ -31,7 +37,7 @@ const ChatPage = () => {
     },
     {
       createdAt: new Date(Date.now()),
-      messageId: "1",
+      messageId: "3",
       senderId: "1",
       profilePicture: "https://via.placeholder.com/150",
       type: "text",
@@ -40,7 +46,7 @@ const ChatPage = () => {
     },
     {
       createdAt: new Date(Date.now() + 2000),
-      messageId: "2",
+      messageId: "4",
       senderId: "2",
       profilePicture: "https://via.placeholder.com/150",
       type: "text",
@@ -48,7 +54,7 @@ const ChatPage = () => {
     },
     {
       createdAt: new Date(Date.now()),
-      messageId: "1",
+      messageId: "5",
       senderId: "1",
       profilePicture: "https://via.placeholder.com/150",
       type: "text",
@@ -57,7 +63,7 @@ const ChatPage = () => {
     },
     {
       createdAt: new Date(Date.now() + 2000),
-      messageId: "2",
+      messageId: "6",
       senderId: "2",
       profilePicture: "https://via.placeholder.com/150",
       type: "text",
@@ -65,16 +71,16 @@ const ChatPage = () => {
     },
     {
       createdAt: new Date(Date.now()),
-      messageId: "1",
+      messageId: "7",
       senderId: "1",
       profilePicture: "https://via.placeholder.com/150",
       type: "text",
       text: "Hello, how are you?",
-      name: "John Doe",
+      name: "John oe",
     },
     {
       createdAt: new Date(Date.now() + 2000),
-      messageId: "2",
+      messageId: "8",
       senderId: "2",
       profilePicture: "https://via.placeholder.com/150",
       type: "text",
@@ -82,7 +88,7 @@ const ChatPage = () => {
     },
     {
       createdAt: new Date(Date.now()),
-      messageId: "1",
+      messageId: "9",
       senderId: "1",
       profilePicture: "https://via.placeholder.com/150",
       type: "text",
@@ -91,7 +97,7 @@ const ChatPage = () => {
     },
     {
       createdAt: new Date(Date.now() + 2000),
-      messageId: "2",
+      messageId: "10",
       senderId: "2",
       profilePicture: "https://via.placeholder.com/150",
       type: "text",
@@ -99,7 +105,7 @@ const ChatPage = () => {
     },
     {
       createdAt: new Date(Date.now()),
-      messageId: "1",
+      messageId: "11",
       senderId: "1",
       profilePicture: "https://via.placeholder.com/150",
       type: "text",
@@ -108,7 +114,7 @@ const ChatPage = () => {
     },
     {
       createdAt: new Date(Date.now() + 2000),
-      messageId: "2",
+      messageId: "12",
       senderId: "2",
       profilePicture: "https://via.placeholder.com/150",
       type: "text",
@@ -116,26 +122,41 @@ const ChatPage = () => {
     },
   ]);
 
-  // append user typed message to messages array
-  const handleSend = (message: Message) => {
-    setMessages([
-      ...messages,
-      {
-        messageId: `${messageId}`,
-        senderId: "1",
-        profilePicture: "https://via.placeholder.com/150",
-        type: message.type,
-        text: message.text,
-        createdAt: message.createdAt,
-        read: false,
-      },
-    ]);
+  const handleSend = (message) => {
+    const newMessage = {
+      senderId: '1', // Adjust this to the correct sender ID
+      profilePicture: 'https://via.placeholder.com/150',
+      type: message.type,
+      text: message.text,
+      createdAt: new Date(),
+    };
+    sendMessage('/app/chat.sendMessage', newMessage);
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
 
-  const messagesToDisplay = useMemo(
-    () => messages?.slice(-(page * PAGE_SIZE)),
-    [messages, page]
-  );
+  useEffect(() => {
+    const onConnect = () => {
+      console.log('Connected to WebSocket');
+      subscribe('/topic/public', (msg) => {
+        const receivedMessage = JSON.parse(msg.body);
+        setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+      });
+    };
+
+    const onError = (error) => {
+      console.log('WebSocket error: ', error);
+    };
+
+    connect(onConnect, onError);
+
+    return () => {
+      disconnect();
+    };
+  }, []);
+
+  const messagesToDisplay = messages.slice(-(page * PAGE_SIZE));
+
+
 
   return (
     <Layout>
