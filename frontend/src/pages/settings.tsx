@@ -53,8 +53,6 @@ const SettingsPage = () => {
 
     const onChangePasswordSubmit = (data: InputsChangePassword) => {
         if (data.newPassword !== data.repeatNewPassword) {
-            // console.log("Jestem w error");
-            //console.log(error);
             setShowConfirmationPassword(false);
             toast({
                 title: `Validation error`,
@@ -90,8 +88,6 @@ const SettingsPage = () => {
                 }
             })
             .catch((error) => {
-                // console.log("Jestem w error");
-                //console.log(error);
                 const response = error.response;
                 const message = response.data;
                 toast({
@@ -110,7 +106,6 @@ const SettingsPage = () => {
             newEmail: data.newEmail,
             password: data.password,
         };
-        // console.log(dataToSend);
         setShowConfirmationEmail(false);
 
         axios.post("user/changeEmail", {
@@ -133,8 +128,6 @@ const SettingsPage = () => {
                 }
             })
             .catch((error) => {
-                // console.log("Jestem w error");
-                console.log(error);
                 const response = error.response;
                 const message = response.data;
                 toast({

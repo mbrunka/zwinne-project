@@ -50,7 +50,6 @@ const Layout = ({ hideSideBar = false, children }: LayoutProps) => {
               label="Chat"
               href="/chat"
               ico={MessageCircle}
-              count={6}
             />
           {/* <NavItem
                label={t('navigation.subitems')}

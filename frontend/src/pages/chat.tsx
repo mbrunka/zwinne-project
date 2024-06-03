@@ -1,166 +1,91 @@
 import { useToastPromise } from "@/hooks/useToast";
 import { Button, Flex } from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
-import Layout from "../components/Layout";
-import { connect, disconnect, subscribe, sendMessage } from "../utils/WebSocketUtil"
+import { Client } from "@stomp/stompjs";
 import Cookies from "js-cookie";
-import { Chat, Message } from "react-chat-module";
+import { useEffect, useRef, useState } from "react";
+import { Chat } from "react-chat-module";
 import "react-chat-module/dist/index.css";
-
-const jwtToken = Cookies.get("token");
-console.log(jwtToken)
-
-const SOCKET_URL = 'ws://localhost:8080/chat';
+import SockJS from "sockjs-client";
+import Layout from "../components/Layout";
 
 const PAGE_SIZE = 4;
 
 const ChatPage = () => {
   const toast = useToastPromise();
   const [page, setPage] = useState(1);
-  const [messages, setMessages] = useState([
-    {
-      createdAt: new Date(Date.now()),
-      messageId: "1",
-      senderId: "1",
-      profilePicture: "https://via.placeholder.com/150",
-      type: "text",
-      text: "Hello, how are you?",
-      name: "John Doe",
-    },
-    {
-      createdAt: new Date(Date.now() + 2000),
-      messageId: "2",
-      senderId: "2",
-      profilePicture: "https://via.placeholder.com/150",
-      type: "text",
-      text: "I'm fine, and you?",
-    },
-    {
-      createdAt: new Date(Date.now()),
-      messageId: "3",
-      senderId: "1",
-      profilePicture: "https://via.placeholder.com/150",
-      type: "text",
-      text: "Hello, how are you?",
-      name: "John Doe",
-    },
-    {
-      createdAt: new Date(Date.now() + 2000),
-      messageId: "4",
-      senderId: "2",
-      profilePicture: "https://via.placeholder.com/150",
-      type: "text",
-      text: "I'm fine, and you?",
-    },
-    {
-      createdAt: new Date(Date.now()),
-      messageId: "5",
-      senderId: "1",
-      profilePicture: "https://via.placeholder.com/150",
-      type: "text",
-      text: "Hello, how are you?",
-      name: "John Doe",
-    },
-    {
-      createdAt: new Date(Date.now() + 2000),
-      messageId: "6",
-      senderId: "2",
-      profilePicture: "https://via.placeholder.com/150",
-      type: "text",
-      text: "I'm fine, and you?",
-    },
-    {
-      createdAt: new Date(Date.now()),
-      messageId: "7",
-      senderId: "1",
-      profilePicture: "https://via.placeholder.com/150",
-      type: "text",
-      text: "Hello, how are you?",
-      name: "John oe",
-    },
-    {
-      createdAt: new Date(Date.now() + 2000),
-      messageId: "8",
-      senderId: "2",
-      profilePicture: "https://via.placeholder.com/150",
-      type: "text",
-      text: "I'm fine, and you?",
-    },
-    {
-      createdAt: new Date(Date.now()),
-      messageId: "9",
-      senderId: "1",
-      profilePicture: "https://via.placeholder.com/150",
-      type: "text",
-      text: "Hello, how are you?",
-      name: "John Doe",
-    },
-    {
-      createdAt: new Date(Date.now() + 2000),
-      messageId: "10",
-      senderId: "2",
-      profilePicture: "https://via.placeholder.com/150",
-      type: "text",
-      text: "I'm fine, and you?",
-    },
-    {
-      createdAt: new Date(Date.now()),
-      messageId: "11",
-      senderId: "1",
-      profilePicture: "https://via.placeholder.com/150",
-      type: "text",
-      text: "Hello, how are you?",
-      name: "John Doe",
-    },
-    {
-      createdAt: new Date(Date.now() + 2000),
-      messageId: "12",
-      senderId: "2",
-      profilePicture: "https://via.placeholder.com/150",
-      type: "text",
-      text: "I'm fine, and you?",
-    },
-  ]);
+  const email = Cookies.get("email");
 
-  const handleSend = (message) => {
-    const newMessage = {
-      senderId: '1', // Adjust this to the correct sender ID
-      profilePicture: 'https://via.placeholder.com/150',
-      type: message.type,
-      text: message.text,
-      createdAt: new Date(),
-    };
-    sendMessage('/app/chat.sendMessage', newMessage);
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
-  };
+  const [messages, setMessages] = useState([]);
+
+  const socket = useRef(null);
+  const stompClient = useRef<Client | null>(null);
 
   useEffect(() => {
-    const onConnect = () => {
-      console.log('Connected to WebSocket');
-      subscribe('/topic/public', (msg) => {
-        const receivedMessage = JSON.parse(msg.body);
-        setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+    // Create a new STOMP client over the SockJS connection
+    socket.current = new SockJS("http://localhost:8080/chat");
+    stompClient.current = new Client({
+      webSocketFactory: () => socket.current!,
+    });
+
+    stompClient.current.onConnect = (frame) => {
+      stompClient.current!.subscribe("/topic/public", (message) => {
+        const receivedMessage = JSON.parse(message.body);
+        setMessages((prev) => {
+          if (
+            !prev.find((msg) => msg?.messageId === receivedMessage.id) &&
+            receivedMessage.content
+          ) {
+            return [
+              ...prev,
+              {
+                createdAt: new Date(receivedMessage.time),
+                messageId: receivedMessage.id,
+                senderId: receivedMessage.sender === email ? "1" : "2",
+                profilePicture: "https://via.placeholder.com/150",
+                type: "text",
+                text: receivedMessage.content,
+                name: receivedMessage.sender,
+              },
+            ];
+          }
+          return prev;
+        });
       });
     };
 
-    const onError = (error) => {
-      console.log('WebSocket error: ', error);
-    };
-
-    connect(onConnect, onError);
+    stompClient.current.activate();
 
     return () => {
-      disconnect();
+      if (stompClient.current) {
+        stompClient.current.deactivate();
+      }
     };
-  }, []);
+  }, [email]);
+
+  const handleSend = (message) => {
+    if (stompClient.current?.connected) {
+      const newMessage = {
+        type: "CHAT",
+        content: message.text,
+        sender: email,
+        time: new Date().toISOString(),
+        id: `${new Date().getTime()}`, // Użyj znacznika czasu jako unikalnego identyfikatora
+      };
+
+      stompClient.current.publish({
+        destination: "/app/chat.sendMessage",
+        body: JSON.stringify(newMessage),
+      });
+    } else {
+      stompClient.current?.activate();
+    }
+  };
 
   const messagesToDisplay = messages.slice(-(page * PAGE_SIZE));
 
-
-
   return (
     <Layout>
-      <Flex direction="column">
+      <Flex direction="column" height="90vh">
         {page * PAGE_SIZE < messages?.length && (
           <Button
             onClick={() => setPage((prevValue) => prevValue + 1)}
@@ -170,7 +95,7 @@ const ChatPage = () => {
           </Button>
         )}
         <Chat
-          style={{ width: "40%", position: "relative" }}
+          style={{ flex: 1, width: "100%" }}
           userId={"1"}
           messages={messagesToDisplay}
           onSend={handleSend}
