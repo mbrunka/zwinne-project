@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.0 (Python 3.12.2 on win32)" generated="2024-06-07T21:08:27.470217" rpa="false" schemaversion="5">
+<suite id="s1" name="Test" source="D:\Code\zwinne-project\test">
+<suite id="s1-s1" name="Tests" source="D:\Code\zwinne-project\test\tests">
+<suite id="s1-s1-s1" name="01 Auth" source="D:\Code\zwinne-project\test\tests\01_auth.robot">
+<test id="s1-s1-s1-t1" name="Register Student" line="17">
+<kw name="Create Session" owner="RequestsLibrary" type="SETUP">
+<msg time="2024-06-07T21:08:27.827671" level="INFO">Creating Session using : alias=base_url, url=http://localhost:8080, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<arg>base_url</arg>
+<arg>${BASE_URL}</arg>
+<doc>Create Session: create a HTTP session to a server</doc>
+<status status="PASS" start="2024-06-07T21:08:27.827671" elapsed="0.000497"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-07T21:08:27.829161" level="INFO">${headers} = {'Content-Type': 'application/json'}</msg>
+<var>${headers}</var>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-07T21:08:27.828665" elapsed="0.000496"/>
+</kw>
+<kw name="Generate Random String" owner="String">
+<msg time="2024-06-07T21:08:27.830155" level="INFO">${random} = V[PouIik</msg>
+<var>${random}</var>
+<arg>8</arg>
+<arg>[LETTERS][DIGITS]</arg>
+<doc>Generates a string with a desired ``length`` from the given ``chars``.</doc>
+<status status="PASS" start="2024-06-07T21:08:27.829659" elapsed="0.000496"/>
+</kw>
+<kw name="Generate Random String" owner="String">
+<msg time="2024-06-07T21:08:27.830652" level="INFO">${random_idex} = TI]I]S</msg>
+<var>${random_idex}</var>
+<arg>6</arg>
+<arg>[DIGITS]</arg>
+<doc>Generates a string with a desired ``length`` from the given ``chars``.</doc>
+<status status="PASS" start="2024-06-07T21:08:27.830652" elapsed="0.000000"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-07T21:08:27.831645" level="INFO">${data} = {'email': 'V[PouIik@test.pl', 'password': '1234', 'first_name': 'John', 'last_name': 'Doe', 'nrIndeksu': 'TI]I]S', 'stacjonarny': True}</msg>
+<var>${data}</var>
+<arg>email=${random}@test.pl</arg>
+<arg>password=${PASSWORD}</arg>
+<arg>first_name=John</arg>
+<arg>last_name=Doe</arg>
+<arg>nrIndeksu=${random_idex}</arg>
+<arg>stacjonarny=${True}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-07T21:08:27.831199" elapsed="0.000446"/>
+</kw>
+<kw name="POST On Session" owner="RequestsLibrary">
+<msg time="2024-06-07T21:08:27.939612" level="INFO">POST Request : url=http://localhost:8080/api/v1/auth/register 
+ path_url=/api/v1/auth/register 
+ headers={'User-Agent': 'python-requests/2.32.3', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'Content-Length': '135'} 
+ body=b'{"email": "V[PouIik@test.pl", "password": "1234", "first_name": "John", "last_name": "Doe", "nrIndeksu": "TI]I]S", "stacjonarny": true}' 
+ </msg>
+<msg time="2024-06-07T21:08:27.939612" level="INFO">POST Response : url=http://localhost:8080/api/v1/auth/register 
+ status=200, reason= 
+ headers={'Vary': 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers', 'X-Content-Type-Options': 'nosniff', 'X-XSS-Protection': '0', 'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0', 'X-Frame-Options': 'DENY', 'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Date': 'Fri, 07 Jun 2024 19:08:27 GMT', 'Keep-Alive': 'timeout=60', 'Connection': 'keep-alive'} 
+ body={"authToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJWW1BvdUlpa0B0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA3LCJleHAiOjE3MTc3ODkxMDcsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiU1RVREVOVCJ9XSwiZXh0cmEiOnt9fQ.H8ONq3A5I1VvF4zvFDvF1Hpv8NvCgkbOag_jP1qmLC4","refreshToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJWW1BvdUlpa0B0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA3LCJleHAiOjE3MTgzOTIxMDcsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIn0.gGfcFHL-2MK3UeyWsfQEGrV_LFMWzy79aKzX7VwLlrg","role":null} 
+ </msg>
+<msg time="2024-06-07T21:08:27.939612" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>base_url</arg>
+<arg>/api/v1/auth/register</arg>
+<arg>headers=${headers}</arg>
+<arg>json=${data}</arg>
+<doc>Sends a POST request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2024-06-07T21:08:27.832141" elapsed="0.107471"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2024-06-07T21:08:27.942060" level="INFO">{"authToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJWW1BvdUlpa0B0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA3LCJleHAiOjE3MTc3ODkxMDcsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiU1RVREVOVCJ9XSwiZXh0cmEiOnt9fQ.H8ONq3A5I1VvF4zvFDvF1Hpv8NvCgkbOag_jP1qmLC4","refreshToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJWW1BvdUlpa0B0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA3LCJleHAiOjE3MTgzOTIxMDcsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIn0.gGfcFHL-2MK3UeyWsfQEGrV_LFMWzy79aKzX7VwLlrg","role":null}</msg>
+<arg>${response.content}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2024-06-07T21:08:27.941554" elapsed="0.000506"/>
+</kw>
+<kw name="Should Be Equal As Strings" owner="BuiltIn">
+<msg time="2024-06-07T21:08:27.942060" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${response.status_code}</arg>
+<arg>200</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<status status="PASS" start="2024-06-07T21:08:27.942060" elapsed="0.001000"/>
+</kw>
+<kw name="Convert To String" owner="BuiltIn">
+<msg time="2024-06-07T21:08:27.943060" level="INFO">${response_json} = {"authToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJWW1BvdUlpa0B0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA3LCJleHAiOjE3MTc3ODkxMDcsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiU1RVREVOVCJ9X...</msg>
+<var>${response_json}</var>
+<arg>${response.content}</arg>
+<doc>Converts the given item to a Unicode string.</doc>
+<status status="PASS" start="2024-06-07T21:08:27.943060" elapsed="0.000000"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2024-06-07T21:08:27.944051" level="INFO">${response_json} = {'authToken': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJWW1BvdUlpa0B0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA3LCJleHAiOjE3MTc3ODkxMDcsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiU1RVREVOVCJ9...</msg>
+<var>${response_json}</var>
+<arg>json.loads($response_json)</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2024-06-07T21:08:27.944051" elapsed="0.000000"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2024-06-07T21:08:27.944051" level="INFO">Length is 247.</msg>
+<arg>${response_json}[authToken]</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2024-06-07T21:08:27.944051" elapsed="0.000000"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2024-06-07T21:08:27.945049" level="INFO">Length is 188.</msg>
+<arg>${response_json}[refreshToken]</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2024-06-07T21:08:27.945049" elapsed="0.000000"/>
+</kw>
+<kw name="Delete All Sessions" owner="RequestsLibrary" type="TEARDOWN">
+<msg time="2024-06-07T21:08:27.945049" level="INFO">Deleting All Sessions</msg>
+<doc>Removes all the session objects</doc>
+<status status="PASS" start="2024-06-07T21:08:27.945049" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2024-06-07T21:08:27.826552" elapsed="0.119427"/>
+</test>
+<test id="s1-s1-s1-t2" name="Register Teacher Candidate" line="32">
+<kw name="Create Session" owner="RequestsLibrary" type="SETUP">
+<msg time="2024-06-07T21:08:27.946972" level="INFO">Creating Session using : alias=base_url, url=http://localhost:8080, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<arg>base_url</arg>
+<arg>${BASE_URL}</arg>
+<doc>Create Session: create a HTTP session to a server</doc>
+<status status="PASS" start="2024-06-07T21:08:27.946972" elapsed="0.000000"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-07T21:08:27.946972" level="INFO">${headers} = {'Content-Type': 'application/json'}</msg>
+<var>${headers}</var>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-07T21:08:27.946972" elapsed="0.000000"/>
+</kw>
+<kw name="Generate Random String" owner="String">
+<msg time="2024-06-07T21:08:27.947825" level="INFO">${random} = L[DPXztd</msg>
+<var>${random}</var>
+<arg>8</arg>
+<arg>[LETTERS][DIGITS]</arg>
+<doc>Generates a string with a desired ``length`` from the given ``chars``.</doc>
+<status status="PASS" start="2024-06-07T21:08:27.946972" elapsed="0.000853"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-07T21:08:27.947825" level="INFO">${data} = {'email': 'L[DPXztd@test.pl', 'password': '1234', 'first_name': 'John', 'last_name': 'Doe'}</msg>
+<var>${data}</var>
+<arg>email=${random}@test.pl</arg>
+<arg>password=${PASSWORD}</arg>
+<arg>first_name=John</arg>
+<arg>last_name=Doe</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-07T21:08:27.947825" elapsed="0.000000"/>
+</kw>
+<kw name="POST On Session" owner="RequestsLibrary">
+<msg time="2024-06-07T21:08:28.025985" level="INFO">POST Request : url=http://localhost:8080/api/v1/auth/registerTeacher 
+ path_url=/api/v1/auth/registerTeacher 
+ headers={'User-Agent': 'python-requests/2.32.3', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'Content-Length': '91'} 
+ body=b'{"email": "L[DPXztd@test.pl", "password": "1234", "first_name": "John", "last_name": "Doe"}' 
+ </msg>
+<msg time="2024-06-07T21:08:28.025985" level="INFO">POST Response : url=http://localhost:8080/api/v1/auth/registerTeacher 
+ status=200, reason= 
+ headers={'Vary': 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers', 'X-Content-Type-Options': 'nosniff', 'X-XSS-Protection': '0', 'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0', 'X-Frame-Options': 'DENY', 'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Date': 'Fri, 07 Jun 2024 19:08:27 GMT', 'Keep-Alive': 'timeout=60', 'Connection': 'keep-alive'} 
+ body={"authToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJMW0RQWHp0ZEB0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA4LCJleHAiOjE3MTc3ODkxMDgsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiS0FORFlEQVRfTiJ9XSwiZXh0cmEiOnt9fQ.hDIuzuFPccK3TbrSmOE_C2A_YS4zA4hdlRJp4uFgphA","refreshToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJMW0RQWHp0ZEB0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA4LCJleHAiOjE3MTgzOTIxMDgsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIn0.MiJ4HE95WGRZKS-Pgrv36ncut3TG2nwkpYZ3EW2GDbU","role":null} 
+ </msg>
+<msg time="2024-06-07T21:08:28.026983" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>base_url</arg>
+<arg>/api/v1/auth/registerTeacher</arg>
+<arg>headers=${headers}</arg>
+<arg>json=${data}</arg>
+<doc>Sends a POST request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2024-06-07T21:08:27.947825" elapsed="0.079158"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.027979" level="INFO">{"authToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJMW0RQWHp0ZEB0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA4LCJleHAiOjE3MTc3ODkxMDgsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiS0FORFlEQVRfTiJ9XSwiZXh0cmEiOnt9fQ.hDIuzuFPccK3TbrSmOE_C2A_YS4zA4hdlRJp4uFgphA","refreshToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJMW0RQWHp0ZEB0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA4LCJleHAiOjE3MTgzOTIxMDgsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIn0.MiJ4HE95WGRZKS-Pgrv36ncut3TG2nwkpYZ3EW2GDbU","role":null}</msg>
+<arg>${response.content}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.026983" elapsed="0.000996"/>
+</kw>
+<kw name="Should Be Equal As Strings" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.027979" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${response.status_code}</arg>
+<arg>200</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.027979" elapsed="0.000996"/>
+</kw>
+<kw name="Convert To String" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.028975" level="INFO">${response_json} = {"authToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJMW0RQWHp0ZEB0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA4LCJleHAiOjE3MTc3ODkxMDgsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiS0FORFlEQVRfT...</msg>
+<var>${response_json}</var>
+<arg>${response.content}</arg>
+<doc>Converts the given item to a Unicode string.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.028975" elapsed="0.000000"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.029973" level="INFO">${response_json} = {'authToken': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJMW0RQWHp0ZEB0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA4LCJleHAiOjE3MTc3ODkxMDgsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiS0FORFlEQVRf...</msg>
+<var>${response_json}</var>
+<arg>json.loads($response_json)</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.028975" elapsed="0.000998"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.029973" level="INFO">Length is 251.</msg>
+<arg>${response_json}[authToken]</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.029973" elapsed="0.000000"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.029973" level="INFO">Length is 188.</msg>
+<arg>${response_json}[refreshToken]</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.029973" elapsed="0.000000"/>
+</kw>
+<kw name="Delete All Sessions" owner="RequestsLibrary" type="TEARDOWN">
+<msg time="2024-06-07T21:08:28.030969" level="INFO">Deleting All Sessions</msg>
+<doc>Removes all the session objects</doc>
+<status status="PASS" start="2024-06-07T21:08:28.030969" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2024-06-07T21:08:27.945979" elapsed="0.084990"/>
+</test>
+<test id="s1-s1-s1-t3" name="Register Teacher As Admin" line="46">
+<kw name="Create Session" owner="RequestsLibrary" type="SETUP">
+<msg time="2024-06-07T21:08:28.031664" level="INFO">Creating Session using : alias=base_url, url=http://localhost:8080, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<arg>base_url</arg>
+<arg>${BASE_URL}</arg>
+<doc>Create Session: create a HTTP session to a server</doc>
+<status status="PASS" start="2024-06-07T21:08:28.031664" elapsed="0.000000"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.032659" level="INFO">${headers} = {'Content-Type': 'application/json'}</msg>
+<var>${headers}</var>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.031664" elapsed="0.000995"/>
+</kw>
+<kw name="Generate Random String" owner="String">
+<msg time="2024-06-07T21:08:28.032659" level="INFO">${random} = ImiIvBGR</msg>
+<var>${random}</var>
+<arg>8</arg>
+<arg>[LETTERS][DIGITS]</arg>
+<doc>Generates a string with a desired ``length`` from the given ``chars``.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.032659" elapsed="0.000000"/>
+</kw>
+<variable name="${TESTSING_ACCOUNT}">
+<var>${random}@test.pl</var>
+<status status="PASS" start="2024-06-07T21:08:28.032659" elapsed="0.000000"/>
+</variable>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.033659" level="INFO">${data} = {'email': 'ImiIvBGR@test.pl', 'password': '1234', 'first_name': 'John', 'last_name': 'Doe'}</msg>
+<var>${data}</var>
+<arg>email=${random}@test.pl</arg>
+<arg>password=${PASSWORD}</arg>
+<arg>first_name=John</arg>
+<arg>last_name=Doe</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.032659" elapsed="0.001000"/>
+</kw>
+<kw name="POST On Session" owner="RequestsLibrary">
+<msg time="2024-06-07T21:08:28.118826" level="INFO">POST Request : url=http://localhost:8080/api/v1/auth/admin/registerTeacher 
+ path_url=/api/v1/auth/admin/registerTeacher 
+ headers={'User-Agent': 'python-requests/2.32.3', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'Content-Length': '91'} 
+ body=b'{"email": "ImiIvBGR@test.pl", "password": "1234", "first_name": "John", "last_name": "Doe"}' 
+ </msg>
+<msg time="2024-06-07T21:08:28.118826" level="INFO">POST Response : url=http://localhost:8080/api/v1/auth/admin/registerTeacher 
+ status=200, reason= 
+ headers={'Vary': 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers', 'X-Content-Type-Options': 'nosniff', 'X-XSS-Protection': '0', 'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0', 'X-Frame-Options': 'DENY', 'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Date': 'Fri, 07 Jun 2024 19:08:27 GMT', 'Keep-Alive': 'timeout=60', 'Connection': 'keep-alive'} 
+ body={"authToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbWlJdkJHUkB0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA4LCJleHAiOjE3MTc3ODkxMDgsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiTkFVQ1pZQ0lFTCJ9XSwiZXh0cmEiOnt9fQ.4EH2rQpzsrafggaoFEDQthUnc3D5FihWZTwD3DDUeP8","refreshToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbWlJdkJHUkB0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA4LCJleHAiOjE3MTgzOTIxMDgsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIn0.RTVQfL2iwKfK6DOTeZo-g4qm1wspPOndg-pFPoI_fxY","role":null} 
+ </msg>
+<msg time="2024-06-07T21:08:28.118826" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>base_url</arg>
+<arg>/api/v1/auth/admin/registerTeacher</arg>
+<arg>headers=${headers}</arg>
+<arg>json=${data}</arg>
+<doc>Sends a POST request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.033659" elapsed="0.085167"/>
+</kw>
+<kw name="Log" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.120657" level="INFO">{"authToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbWlJdkJHUkB0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA4LCJleHAiOjE3MTc3ODkxMDgsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiTkFVQ1pZQ0lFTCJ9XSwiZXh0cmEiOnt9fQ.4EH2rQpzsrafggaoFEDQthUnc3D5FihWZTwD3DDUeP8","refreshToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbWlJdkJHUkB0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA4LCJleHAiOjE3MTgzOTIxMDgsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIn0.RTVQfL2iwKfK6DOTeZo-g4qm1wspPOndg-pFPoI_fxY","role":null}</msg>
+<arg>${response.content}</arg>
+<doc>Logs the given message with the given level.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.119926" elapsed="0.000731"/>
+</kw>
+<kw name="Should Be Equal As Strings" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.121763" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${response.status_code}</arg>
+<arg>200</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.121167" elapsed="0.000596"/>
+</kw>
+<kw name="Convert To String" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.122666" level="INFO">${response_json} = {"authToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbWlJdkJHUkB0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA4LCJleHAiOjE3MTc3ODkxMDgsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiTkFVQ1pZQ0lFT...</msg>
+<var>${response_json}</var>
+<arg>${response.content}</arg>
+<doc>Converts the given item to a Unicode string.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.121763" elapsed="0.000903"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.123171" level="INFO">${response_json} = {'authToken': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJbWlJdkJHUkB0ZXN0LnBsIiwiaWF0IjoxNzE3Nzg3MzA4LCJleHAiOjE3MTc3ODkxMDgsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiTkFVQ1pZQ0lF...</msg>
+<var>${response_json}</var>
+<arg>json.loads($response_json)</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.123171" elapsed="0.000000"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.123680" level="INFO">Length is 251.</msg>
+<arg>${response_json}[authToken]</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.123680" elapsed="0.000000"/>
+</kw>
+<kw name="Should Not Be Empty" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.123680" level="INFO">Length is 188.</msg>
+<arg>${response_json}[refreshToken]</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.123680" elapsed="0.000000"/>
+</kw>
+<kw name="Delete All Sessions" owner="RequestsLibrary" type="TEARDOWN">
+<msg time="2024-06-07T21:08:28.124673" level="INFO">Deleting All Sessions</msg>
+<doc>Removes all the session objects</doc>
+<status status="PASS" start="2024-06-07T21:08:28.123680" elapsed="0.000993"/>
+</kw>
+<status status="PASS" start="2024-06-07T21:08:28.031664" elapsed="0.093009"/>
+</test>
+<test id="s1-s1-s1-t4" name="Login Teacher" line="61">
+<kw name="Create Session" owner="RequestsLibrary" type="SETUP">
+<msg time="2024-06-07T21:08:28.125722" level="INFO">Creating Session using : alias=base_url, url=http://localhost:8080, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<arg>base_url</arg>
+<arg>${BASE_URL}</arg>
+<doc>Create Session: create a HTTP session to a server</doc>
+<status status="PASS" start="2024-06-07T21:08:28.125722" elapsed="0.001024"/>
+</kw>
+<kw name="Login As Teacher" owner="auth">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.126746" level="INFO">${headers} = {'Content-Type': 'application/json'}</msg>
+<var>${headers}</var>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.126746" elapsed="0.000000"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.127743" level="INFO">${data} = {'email': 'nauczyciel@mail.pl', 'password': '1234'}</msg>
+<var>${data}</var>
+<arg>email=${email}</arg>
+<arg>password=${password}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.127743" elapsed="0.000000"/>
+</kw>
+<kw name="POST On Session" owner="RequestsLibrary">
+<msg time="2024-06-07T21:08:28.216438" level="INFO">POST Request : url=http://localhost:8080/api/v1/auth/login 
+ path_url=/api/v1/auth/login 
+ headers={'User-Agent': 'python-requests/2.32.3', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'Content-Length': '51'} 
+ body=b'{"email": "nauczyciel@mail.pl", "password": "1234"}' 
+ </msg>
+<msg time="2024-06-07T21:08:28.216438" level="INFO">POST Response : url=http://localhost:8080/api/v1/auth/login 
+ status=200, reason= 
+ headers={'Vary': 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers', 'X-Content-Type-Options': 'nosniff', 'X-XSS-Protection': '0', 'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0', 'X-Frame-Options': 'DENY', 'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Date': 'Fri, 07 Jun 2024 19:08:27 GMT', 'Keep-Alive': 'timeout=60', 'Connection': 'keep-alive'} 
+ body={"authToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYXVjenljaWVsQG1haWwucGwiLCJpYXQiOjE3MTc3ODczMDgsImV4cCI6MTcxNzc4OTEwOCwiaXNzIjoiaHR0cHM6Ly93d3cucHJvamVjdC5jb20iLCJyb2xlIjpbeyJhdXRob3JpdHkiOiJLQU5EWURBVF9OIn1dLCJleHRyYSI6e319.WW1MpIKmx7Wo9_vuHrh7lrZfWhJit9aStGGlEj8Ze6w","refreshToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYXVjenljaWVsQG1haWwucGwiLCJpYXQiOjE3MTc3ODczMDgsImV4cCI6MTcxODM5MjEwOCwiaXNzIjoiaHR0cHM6Ly93d3cucHJvamVjdC5jb20ifQ.Tbz8WNNWBBUlqDTPCRVcE3hrMlaZH0SKQ9_74Z_u69Y","role":"KANDYDAT_N"} 
+ </msg>
+<msg time="2024-06-07T21:08:28.216985" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>base_url</arg>
+<arg>/api/v1/auth/login</arg>
+<arg>headers=${headers}</arg>
+<arg>json=${data}</arg>
+<doc>Sends a POST request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.127743" elapsed="0.089242"/>
+</kw>
+<kw name="Convert To String" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.217482" level="INFO">${response_json} = {"authToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYXVjenljaWVsQG1haWwucGwiLCJpYXQiOjE3MTc3ODczMDgsImV4cCI6MTcxNzc4OTEwOCwiaXNzIjoiaHR0cHM6Ly93d3cucHJvamVjdC5jb20iLCJyb2xlIjpbeyJhdXRob3JpdHkiOiJLQU5EWURBV...</msg>
+<var>${response_json}</var>
+<arg>${response.content}</arg>
+<doc>Converts the given item to a Unicode string.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.216985" elapsed="0.000497"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.217482" level="INFO">${response_json} = {'authToken': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYXVjenljaWVsQG1haWwucGwiLCJpYXQiOjE3MTc3ODczMDgsImV4cCI6MTcxNzc4OTEwOCwiaXNzIjoiaHR0cHM6Ly93d3cucHJvamVjdC5jb20iLCJyb2xlIjpbeyJhdXRob3JpdHkiOiJLQU5EWURB...</msg>
+<var>${response_json}</var>
+<arg>json.loads($response_json)</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.217482" elapsed="0.000000"/>
+</kw>
+<variable name="${AuthToken}" scope="TEST">
+<var>Bearer ${response_json}[authToken]</var>
+<status status="PASS" start="2024-06-07T21:08:28.217482" elapsed="0.000499"/>
+</variable>
+<return>
+<value>${AuthToken}</value>
+<status status="PASS" start="2024-06-07T21:08:28.217981" elapsed="0.000000"/>
+</return>
+<arg>${email_teacher}</arg>
+<arg>${password_teacher}</arg>
+<status status="PASS" start="2024-06-07T21:08:28.126746" elapsed="0.091235"/>
+</kw>
+<status status="PASS" start="2024-06-07T21:08:28.125722" elapsed="0.092703"/>
+</test>
+<status status="PASS" start="2024-06-07T21:08:27.491455" elapsed="0.728957"/>
+</suite>
+<suite id="s1-s1-s2" name="02 Project" source="D:\Code\zwinne-project\test\tests\02_project.robot">
+<test id="s1-s1-s2-t1" name="Create Project" line="13">
+<kw name="Run Keywords" owner="BuiltIn" type="SETUP">
+<kw name="Create Session" owner="RequestsLibrary">
+<msg time="2024-06-07T21:08:28.229120" level="INFO">Creating Session using : alias=base_url, url=http://localhost:8080, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<arg>base_url</arg>
+<arg>${BASE_URL}</arg>
+<doc>Create Session: create a HTTP session to a server</doc>
+<status status="PASS" start="2024-06-07T21:08:28.228622" elapsed="0.000498"/>
+</kw>
+<kw name="Login As Teacher" owner="auth">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.230625" level="INFO">${headers} = {'Content-Type': 'application/json'}</msg>
+<var>${headers}</var>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.230113" elapsed="0.000512"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.230625" level="INFO">${data} = {'email': 'nauczyciel@mail.pl', 'password': '1234'}</msg>
+<var>${data}</var>
+<arg>email=${email}</arg>
+<arg>password=${password}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.230625" elapsed="0.000000"/>
+</kw>
+<kw name="POST On Session" owner="RequestsLibrary">
+<msg time="2024-06-07T21:08:28.314236" level="INFO">POST Request : url=http://localhost:8080/api/v1/auth/login 
+ path_url=/api/v1/auth/login 
+ headers={'User-Agent': 'python-requests/2.32.3', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'Content-Length': '51'} 
+ body=b'{"email": "nauczyciel@mail.pl", "password": "1234"}' 
+ </msg>
+<msg time="2024-06-07T21:08:28.315263" level="INFO">POST Response : url=http://localhost:8080/api/v1/auth/login 
+ status=200, reason= 
+ headers={'Vary': 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers', 'X-Content-Type-Options': 'nosniff', 'X-XSS-Protection': '0', 'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0', 'X-Frame-Options': 'DENY', 'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Date': 'Fri, 07 Jun 2024 19:08:27 GMT', 'Keep-Alive': 'timeout=60', 'Connection': 'keep-alive'} 
+ body={"authToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYXVjenljaWVsQG1haWwucGwiLCJpYXQiOjE3MTc3ODczMDgsImV4cCI6MTcxNzc4OTEwOCwiaXNzIjoiaHR0cHM6Ly93d3cucHJvamVjdC5jb20iLCJyb2xlIjpbeyJhdXRob3JpdHkiOiJLQU5EWURBVF9OIn1dLCJleHRyYSI6e319.WW1MpIKmx7Wo9_vuHrh7lrZfWhJit9aStGGlEj8Ze6w","refreshToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYXVjenljaWVsQG1haWwucGwiLCJpYXQiOjE3MTc3ODczMDgsImV4cCI6MTcxODM5MjEwOCwiaXNzIjoiaHR0cHM6Ly93d3cucHJvamVjdC5jb20ifQ.Tbz8WNNWBBUlqDTPCRVcE3hrMlaZH0SKQ9_74Z_u69Y","role":"KANDYDAT_N"} 
+ </msg>
+<msg time="2024-06-07T21:08:28.315263" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>base_url</arg>
+<arg>/api/v1/auth/login</arg>
+<arg>headers=${headers}</arg>
+<arg>json=${data}</arg>
+<doc>Sends a POST request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.230625" elapsed="0.084638"/>
+</kw>
+<kw name="Convert To String" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.315263" level="INFO">${response_json} = {"authToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYXVjenljaWVsQG1haWwucGwiLCJpYXQiOjE3MTc3ODczMDgsImV4cCI6MTcxNzc4OTEwOCwiaXNzIjoiaHR0cHM6Ly93d3cucHJvamVjdC5jb20iLCJyb2xlIjpbeyJhdXRob3JpdHkiOiJLQU5EWURBV...</msg>
+<var>${response_json}</var>
+<arg>${response.content}</arg>
+<doc>Converts the given item to a Unicode string.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.315263" elapsed="0.000000"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.315263" level="INFO">${response_json} = {'authToken': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYXVjenljaWVsQG1haWwucGwiLCJpYXQiOjE3MTc3ODczMDgsImV4cCI6MTcxNzc4OTEwOCwiaXNzIjoiaHR0cHM6Ly93d3cucHJvamVjdC5jb20iLCJyb2xlIjpbeyJhdXRob3JpdHkiOiJLQU5EWURB...</msg>
+<var>${response_json}</var>
+<arg>json.loads($response_json)</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.315263" elapsed="0.000000"/>
+</kw>
+<variable name="${AuthToken}" scope="TEST">
+<var>Bearer ${response_json}[authToken]</var>
+<status status="PASS" start="2024-06-07T21:08:28.315263" elapsed="0.000954"/>
+</variable>
+<return>
+<value>${AuthToken}</value>
+<status status="PASS" start="2024-06-07T21:08:28.316217" elapsed="0.000000"/>
+</return>
+<arg>${email_teacher}</arg>
+<arg>${password_teacher}</arg>
+<status status="PASS" start="2024-06-07T21:08:28.229617" elapsed="0.086600"/>
+</kw>
+<arg>Create Session</arg>
+<arg>base_url</arg>
+<arg>${BASE_URL}</arg>
+<arg>AND</arg>
+<arg>Login As Teacher</arg>
+<arg>${email_teacher}</arg>
+<arg>${password_teacher}</arg>
+<doc>Executes all the given keywords in a sequence.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.228126" elapsed="0.088091"/>
+</kw>
+<kw name="Generate Random String" owner="String">
+<msg time="2024-06-07T21:08:28.318021" level="INFO">${project_name} = R[TapWFk</msg>
+<var>${project_name}</var>
+<arg>8</arg>
+<arg>[LETTERS][DIGITS]</arg>
+<doc>Generates a string with a desired ``length`` from the given ``chars``.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.317027" elapsed="0.000994"/>
+</kw>
+<kw name="Generate Random String" owner="String">
+<msg time="2024-06-07T21:08:28.318854" level="INFO">${project_descr} = hOmT]ISHNcsgyNRIfv]d[WTMqIGzYzXF</msg>
+<var>${project_descr}</var>
+<arg>32</arg>
+<arg>[LETTERS][DIGITS]</arg>
+<doc>Generates a string with a desired ``length`` from the given ``chars``.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.318854" elapsed="0.000000"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.319848" level="INFO">${headers} = {'Content-Type': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYXVjenljaWVsQG1haWwucGwiLCJpYXQiOjE3MTc3ODczMDgsImV4cCI6MTcxNzc4OTEwOCwiaXNzIjoiaHR0cHM6Ly93d3cucHJvamVjd...</msg>
+<var>${headers}</var>
+<arg>Content-Type=application/json</arg>
+<arg>Authorization=${AuthToken}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.318854" elapsed="0.000994"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.319848" level="INFO">${data} = {'nazwa': 'R[TapWFk', 'opis': 'hOmT]ISHNcsgyNRIfv]d[WTMqIGzYzXF'}</msg>
+<var>${data}</var>
+<arg>nazwa=${project_name}</arg>
+<arg>opis=${project_descr}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.319848" elapsed="0.000000"/>
+</kw>
+<kw name="POST On Session" owner="RequestsLibrary">
+<msg time="2024-06-07T21:08:28.350275" level="INFO">POST Request : url=http://localhost:8080/api/v1/projekty/teacher/create 
+ path_url=/api/v1/projekty/teacher/create 
+ headers={'User-Agent': 'python-requests/2.32.3', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuYXVjenljaWVsQG1haWwucGwiLCJpYXQiOjE3MTc3ODczMDgsImV4cCI6MTcxNzc4OTEwOCwiaXNzIjoiaHR0cHM6Ly93d3cucHJvamVjdC5jb20iLCJyb2xlIjpbeyJhdXRob3JpdHkiOiJLQU5EWURBVF9OIn1dLCJleHRyYSI6e319.WW1MpIKmx7Wo9_vuHrh7lrZfWhJit9aStGGlEj8Ze6w', 'Content-Length': '65'} 
+ body=b'{"nazwa": "R[TapWFk", "opis": "hOmT]ISHNcsgyNRIfv]d[WTMqIGzYzXF"}' 
+ </msg>
+<msg time="2024-06-07T21:08:28.350275" level="INFO">POST Response : url=http://localhost:8080/api/v1/projekty/teacher/create 
+ status=201, reason= 
+ headers={'Vary': 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers', 'Location': 'http://localhost:8080/api/v1/projekty/teacher/create/3', 'X-Content-Type-Options': 'nosniff', 'X-XSS-Protection': '0', 'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0', 'X-Frame-Options': 'DENY', 'Content-Length': '0', 'Date': 'Fri, 07 Jun 2024 19:08:27 GMT', 'Keep-Alive': 'timeout=60', 'Connection': 'keep-alive'} 
+ body=None 
+ </msg>
+<msg time="2024-06-07T21:08:28.350275" level="INFO">${response} = &lt;Response [201]&gt;</msg>
+<var>${response}</var>
+<arg>base_url</arg>
+<arg>/api/v1/projekty/teacher/create</arg>
+<arg>headers=${headers}</arg>
+<arg>json=${data}</arg>
+<doc>Sends a POST request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.321387" elapsed="0.028888"/>
+</kw>
+<kw name="Should Be Equal As Strings" owner="BuiltIn">
+<msg time="2024-06-07T21:08:28.352642" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${response.status_code}</arg>
+<arg>201</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<status status="PASS" start="2024-06-07T21:08:28.351651" elapsed="0.000991"/>
+</kw>
+<status status="PASS" start="2024-06-07T21:08:28.227144" elapsed="0.126155"/>
+</test>
+<status status="PASS" start="2024-06-07T21:08:28.221970" elapsed="0.133310"/>
+</suite>
+<status status="PASS" start="2024-06-07T21:08:27.489737" elapsed="0.867552"/>
+</suite>
+<status status="PASS" start="2024-06-07T21:08:27.472251" elapsed="0.887390"/>
+</suite>
+<statistics>
+<total>
+<stat pass="5" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="5" fail="0" skip="0" id="s1" name="Test">Test</stat>
+<stat pass="5" fail="0" skip="0" id="s1-s1" name="Tests">Test.Tests</stat>
+<stat pass="4" fail="0" skip="0" id="s1-s1-s1" name="01 Auth">Test.Tests.01 Auth</stat>
+<stat pass="1" fail="0" skip="0" id="s1-s1-s2" name="02 Project">Test.Tests.02 Project</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
