@@ -1,7 +1,7 @@
 import { getCurrentRole } from "@/utils/cookies";
 import { Box } from "@chakra-ui/react";
 import React from "react";
-import { Home, Layers, User, Users } from "react-feather";
+import { Home, Layers, MessageCircle, User, Users } from "react-feather";
 import Header from "../Header";
 import NavItem from "../common/NavItem";
 
@@ -45,6 +45,12 @@ const Layout = ({ hideSideBar = false, children }: LayoutProps) => {
               ico={Users}
             />
           )}
+          {/* TODO use real unreadMessages count */}
+          <NavItem
+              label="Chat"
+              href="/chat"
+              ico={MessageCircle}
+            />
           {/* <NavItem
                label={t('navigation.subitems')}
                href="/products"
