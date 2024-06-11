@@ -61,3 +61,7 @@ Register Teacher As Admin
 Login Teacher
     [Setup]    Create Session    base_url    ${BASE_URL}
     Login As Teacher    ${email_teacher}    ${password_teacher}
+
+Login Student
+    [Setup]    Create Session    base_url    ${BASE_URL}
+    Login As Teacher    ${email_student}    ${password_student}
