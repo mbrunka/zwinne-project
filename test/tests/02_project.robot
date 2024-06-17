@@ -14,16 +14,15 @@ Suite Setup    Run Keywords    Register Teacher As Admin With Random Email
 
 *** Test Cases ***
 Create Project
-    VAR    ${SUITE_PROJECT_ID}    10    scope=suite
-#    [Setup]    Run Keywords    Create Session    base_url    ${BASE_URL}
-#    ...        AND             Login As Teacher    ${SUITE_ACCOUNT_EMAIL}    ${SUITE_ACCOUNT_PASSWORD}
-#    ${project_name}    Generate Random String    8    [LETTERS][DIGITS]
-#    ${project_descr}    Generate Random String    32    [LETTERS][DIGITS]
-#    ${headers}    Create Dictionary    Content-Type=application/json    Authorization=${AuthToken}
-#    ${data}    Create Dictionary    nazwa=${project_name}    opis=${project_descr}
-#    ${response}    POST On Session    base_url    /api/v1/projekty/teacher/create   headers=${headers}    json=${data}
-#    VAR    ${SUITE_PROJECT_ID}    ${response.headers['Location'].split('/')[-1]}    scope=suite
-#    Should Be Equal As Strings    ${response.status_code}    201
+    [Setup]    Run Keywords    Create Session    base_url    ${BASE_URL}
+    ...        AND             Login As Teacher    ${SUITE_ACCOUNT_EMAIL}    ${SUITE_ACCOUNT_PASSWORD}
+    ${project_name}    Generate Random String    8    [LETTERS][DIGITS]
+    ${project_descr}    Generate Random String    32    [LETTERS][DIGITS]
+    ${headers}    Create Dictionary    Content-Type=application/json    Authorization=${AuthToken}
+    ${data}    Create Dictionary    nazwa=${project_name}    opis=${project_descr}
+    ${response}    POST On Session    base_url    /api/v1/projekty/teacher/create   headers=${headers}    json=${data}
+    VAR    ${SUITE_PROJECT_ID}    ${response.headers['Location'].split('/')[-1]}    scope=suite
+    Should Be Equal As Strings    ${response.status_code}    201
 
 Add Zadanie
     [Setup]    Run Keywords    Create Session    base_url    ${BASE_URL}
@@ -38,6 +37,7 @@ Add Zadanie
     ${data}    Create Dictionary    nazwa=${task_name}    opis=${task_descr}    priorytet=${task_priority}    statusId=${SUITE_STATUS_ID}    projektId=${SUITE_PROJECT_ID}
     ${response}    POST On Session    base_url    /api/v1/projekty/task   headers=${headers}    json=${data}
     Should Be Equal As Strings    ${response.status_code}    200
+    VAR    ${SUITE_TASK_ID}    ${response.json()['zadanieId']}    scope=suite
 
 Join Project As Student
     [Setup]    Run Keywords    Create Session    base_url    ${BASE_URL}
@@ -54,5 +54,5 @@ Join Zadanie As Student
     ...                 AND    Login As Student    ${SUITE_STUDENT_ACCOUNT_EMAIL}    ${SUITE_STUDENT_ACCOUNT_PASSWORD}
     ${data}    Create Dictionary
     ${headers}    Create Dictionary    Content-Type=application/json    Authorization=${AuthToken}
-    ${response}    POST On Session    base_url    /api/v1/projekty/task/1/join   headers=${headers}    json=${data}
+    ${response}    POST On Session    base_url    /api/v1/projekty/task/${SUITE_TASK_ID}/join   headers=${headers}    json=${data}
     Should Be Equal As Strings    ${response.status_code}    200
