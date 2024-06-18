@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.0 (Python 3.12.2 on win32)" generated="2024-06-08T23:21:30.672529" rpa="false" schemaversion="5">
+<suite id="s1" name="02 Project" source="d:\Code\zwinne-project\test\tests\02_project.robot">
+<test id="s1-t1" name="Join Zadanie" line="45">
+<kw name="Run Keywords" owner="BuiltIn" type="SETUP">
+<kw name="Create Session" owner="RequestsLibrary">
+<msg time="2024-06-08T23:21:30.991702" level="INFO">Creating Session using : alias=base_url, url=http://localhost:8080, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<arg>base_url</arg>
+<arg>${BASE_URL}</arg>
+<doc>Create Session: create a HTTP session to a server</doc>
+<status status="PASS" start="2024-06-08T23:21:30.991702" elapsed="0.000000"/>
+</kw>
+<kw name="Login As Student" owner="auth">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-08T23:21:30.991702" level="INFO">${headers} = {'Content-Type': 'application/json'}</msg>
+<var>${headers}</var>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-08T23:21:30.991702" elapsed="0.000000"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-08T23:21:30.991702" level="INFO">${data} = {'email': 'student@uczelnia.pl', 'password': '1111'}</msg>
+<var>${data}</var>
+<arg>email=${email}</arg>
+<arg>password=${password}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-08T23:21:30.991702" elapsed="0.000000"/>
+</kw>
+<kw name="POST On Session" owner="RequestsLibrary">
+<msg time="2024-06-08T23:21:31.079056" level="INFO">POST Request : url=http://localhost:8080/api/v1/auth/login 
+ path_url=/api/v1/auth/login 
+ headers={'User-Agent': 'python-requests/2.32.3', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'Content-Length': '52'} 
+ body=b'{"email": "student@uczelnia.pl", "password": "1111"}' 
+ </msg>
+<msg time="2024-06-08T23:21:31.079056" level="INFO">POST Response : url=http://localhost:8080/api/v1/auth/login 
+ status=200, reason= 
+ headers={'Vary': 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers', 'X-Content-Type-Options': 'nosniff', 'X-XSS-Protection': '0', 'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0', 'X-Frame-Options': 'DENY', 'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Date': 'Sat, 08 Jun 2024 21:21:31 GMT', 'Keep-Alive': 'timeout=60', 'Connection': 'keep-alive'} 
+ body={"authToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHVkZW50QHVjemVsbmlhLnBsIiwiaWF0IjoxNzE3ODgxNjkxLCJleHAiOjE3MTc4ODM0OTEsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiU1RVREVOVCJ9XSwiZXh0cmEiOnt9fQ.1CsdOMIgsZ4sOddv8av28Gl-R-TIax6gZaYOtLP__A4","refreshToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHVkZW50QHVjemVsbmlhLnBsIiwiaWF0IjoxNzE3ODgxNjkxLCJleHAiOjE3MTg0ODY0OTEsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIn0.V0ojxt8mVCUJUtW841YnkyB-6q7rsd5Gi-aBSjxcHZA","role":"STUDENT"} 
+ </msg>
+<msg time="2024-06-08T23:21:31.079056" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>base_url</arg>
+<arg>/api/v1/auth/login</arg>
+<arg>headers=${headers}</arg>
+<arg>json=${data}</arg>
+<doc>Sends a POST request on a previously created HTTP Session.</doc>
+<status status="PASS" start="2024-06-08T23:21:30.991702" elapsed="0.087354"/>
+</kw>
+<kw name="Convert To String" owner="BuiltIn">
+<msg time="2024-06-08T23:21:31.079056" level="INFO">${response_json} = {"authToken":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHVkZW50QHVjemVsbmlhLnBsIiwiaWF0IjoxNzE3ODgxNjkxLCJleHAiOjE3MTc4ODM0OTEsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiU1RVREVOV...</msg>
+<var>${response_json}</var>
+<arg>${response.content}</arg>
+<doc>Converts the given item to a Unicode string.</doc>
+<status status="PASS" start="2024-06-08T23:21:31.079056" elapsed="0.000000"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2024-06-08T23:21:31.079056" level="INFO">${response_json} = {'authToken': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHVkZW50QHVjemVsbmlhLnBsIiwiaWF0IjoxNzE3ODgxNjkxLCJleHAiOjE3MTc4ODM0OTEsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiU1RVREVO...</msg>
+<var>${response_json}</var>
+<arg>json.loads($response_json)</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2024-06-08T23:21:31.079056" elapsed="0.000000"/>
+</kw>
+<variable name="${AuthToken}" scope="TEST">
+<var>Bearer ${response_json}[authToken]</var>
+<status status="PASS" start="2024-06-08T23:21:31.079056" elapsed="0.000000"/>
+</variable>
+<return>
+<value>${AuthToken}</value>
+<status status="PASS" start="2024-06-08T23:21:31.079056" elapsed="0.000000"/>
+</return>
+<arg>${email_student}</arg>
+<arg>${password_student}</arg>
+<status status="PASS" start="2024-06-08T23:21:30.991702" elapsed="0.087354"/>
+</kw>
+<arg>Create Session</arg>
+<arg>base_url</arg>
+<arg>${BASE_URL}</arg>
+<arg>AND</arg>
+<arg>Login As Student</arg>
+<arg>${email_student}</arg>
+<arg>${password_student}</arg>
+<doc>Executes all the given keywords in a sequence.</doc>
+<status status="PASS" start="2024-06-08T23:21:30.991009" elapsed="0.088047"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-08T23:21:31.095123" level="INFO">${data} = {}</msg>
+<var>${data}</var>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-08T23:21:31.095123" elapsed="0.000000"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2024-06-08T23:21:31.095123" level="INFO">${headers} = {'Content-Type': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHVkZW50QHVjemVsbmlhLnBsIiwiaWF0IjoxNzE3ODgxNjkxLCJleHAiOjE3MTc4ODM0OTEsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY...</msg>
+<var>${headers}</var>
+<arg>Content-Type=application/json</arg>
+<arg>Authorization=${AuthToken}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2024-06-08T23:21:31.095123" elapsed="0.000000"/>
+</kw>
+<kw name="POST On Session" owner="RequestsLibrary">
+<msg time="2024-06-08T23:21:31.114493" level="INFO">POST Request : url=http://localhost:8080/api/v1/projekty/task/1/join 
+ path_url=/api/v1/projekty/task/1/join 
+ headers={'User-Agent': 'python-requests/2.32.3', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHVkZW50QHVjemVsbmlhLnBsIiwiaWF0IjoxNzE3ODgxNjkxLCJleHAiOjE3MTc4ODM0OTEsImlzcyI6Imh0dHBzOi8vd3d3LnByb2plY3QuY29tIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiU1RVREVOVCJ9XSwiZXh0cmEiOnt9fQ.1CsdOMIgsZ4sOddv8av28Gl-R-TIax6gZaYOtLP__A4', 'Content-Length': '2'} 
+ body=b'{}' 
+ </msg>
+<msg time="2024-06-08T23:21:31.114493" level="INFO">POST Response : url=http://localhost:8080/api/v1/projekty/task/1/join 
+ status=400, reason= 
+ headers={'Vary': 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers', 'X-Content-Type-Options': 'nosniff', 'X-XSS-Protection': '0', 'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0', 'X-Frame-Options': 'DENY', 'Content-Type': 'text/plain;charset=UTF-8', 'Content-Length': '17', 'Date': 'Sat, 08 Jun 2024 21:21:31 GMT', 'Connection': 'close'} 
+ body=Zadanie not found 
+ </msg>
+<msg time="2024-06-08T23:21:31.114493" level="FAIL">HTTPError: 400 Client Error:  for url: http://localhost:8080/api/v1/projekty/task/1/join</msg>
+<var>${response}</var>
+<arg>base_url</arg>
+<arg>/api/v1/projekty/task/1/join</arg>
+<arg>headers=${headers}</arg>
+<arg>json=${data}</arg>
+<doc>Sends a POST request on a previously created HTTP Session.</doc>
+<status status="FAIL" start="2024-06-08T23:21:31.095123" elapsed="0.026246">HTTPError: 400 Client Error:  for url: http://localhost:8080/api/v1/projekty/task/1/join</status>
+</kw>
+<kw name="Should Be Equal As Strings" owner="BuiltIn">
+<arg>${response.status_code}</arg>
+<arg>200</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<status status="NOT RUN" start="2024-06-08T23:21:31.122385" elapsed="0.000000"/>
+</kw>
+<status status="FAIL" start="2024-06-08T23:21:30.976007" elapsed="0.146378">HTTPError: 400 Client Error:  for url: http://localhost:8080/api/v1/projekty/task/1/join</status>
+</test>
+<status status="FAIL" start="2024-06-08T23:21:30.676738" elapsed="0.447640"/>
+</suite>
+<statistics>
+<total>
+<stat pass="0" fail="1" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="0" fail="1" skip="0" id="s1" name="02 Project">02 Project</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
