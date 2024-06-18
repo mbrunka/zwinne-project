@@ -85,7 +85,7 @@ const ChatPage = () => {
 
   return (
     <Layout>
-      <Flex direction="column" height="90vh">
+      <Flex direction="column" height="85vh">
         {page * PAGE_SIZE < messages?.length && (
           <Button
             onClick={() => setPage((prevValue) => prevValue + 1)}
@@ -99,6 +99,7 @@ const ChatPage = () => {
           userId={"1"}
           messages={messagesToDisplay}
           onSend={handleSend}
+          disableAttachments
         />
       </Flex>
     </Layout>
